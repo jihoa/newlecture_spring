@@ -130,9 +130,32 @@ IOC컨테이너라고 부르는이유는?
 
 결합까지되서 조립까지되서 컨테이너에 담겨진다.
 
-
-
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+5강 Depedency를 직접 Injection 하기
+
+package spring.di;
+
+import spring.di.entity.Exam;
+import spring.di.entity.NewlecExam;
+import spring.di.ui.ExamConsole;
+import spring.di.ui.GridExamConsole;
+import spring.di.ui.InlineExamConsole;
+
+public class Program {
+
+	public static void main(String[] args) {
+		
+		Exam exam = new NewlecExam();
+		ExamConsole console =new InlineExamConsole(exam);	//DI
+		//ExamConsole console =new GridExamConsole(exam);
+		console.print();
+	}
+
+}
+DI를 하게되면 부품을 바꾸든 부품을 사용하는 외장을 바꾸든 해야하는데
+귀찮은 일이다. 그래서 스프링을 사용할것이다.
+
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
