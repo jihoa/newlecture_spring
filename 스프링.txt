@@ -180,10 +180,48 @@ eclipse help->eclipse marketplace->spring검색
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+7강 스프링 DI 지시서 작성하기
+
+스프링을 이용해서 DI하는 방법을 알아볼것이다.
+
+public class Program {
+
+	public static void main(String[] args) {
+		
+		
+		Exam exam = new NewlecExam();
+		ExamConsole console =new GridExamConsole(exam);
+		console.setExam(exam);
+		console.print();
+	}
+}
+
+이렇게되어있는데 
+		Exam exam = new NewlecExam();
+		ExamConsole console =new GridExamConsole(exam);
+		console.setExam(exam);
+		console.print();
+이 부분을 스프링이 하게 할것이다. 그래서 스프링파일을 만들고 Exam exam = new NewlecExam(); 그대로 쓰면 좋겠지만
+java언어로 이루어진것이 아니기 때문에 <bean> 태그를 이용해서 생성할 개체를 지시해달라고 말한다.
+<bean id="" class=""/>
+class:어떤 클래스를 객체화 할건지는 class에다가 적어준다 패키지명까지 정확하게
+id: 그 객체에 어떤 이름을 쓰려고하는지 지정한다.
+
+<bean id="exam" class="spring.di.entity.NewlecExam"/> 			// 이런식으로하면 xml로 지시했다라고 할수있다.
+
+-settings.xml
+
+<!-- Exam exam = new NewlecExam(); -->
+<bean id="exam" class="spring.di.entity.NewlecExam"/>
+<!-- ExamConsole console =new GridExamConsole(exam); -->
+<bean id="console" class="spring.di.ui.GridExamConsole">		// 변수명:console 클래스명:spring.di.ui.GridExamConsole
+	<!-- console.setExam(exam); -->				
+	<property name="exam" ref="exam" />			// 설정(세팅)을 할때는 property태그를 사용 setExam 함수 name에서 호출할것인데 set을 없애고 대문자를 소문자로 바꿨다.  세터에다가 설정할수있는타입은 두가지가있다. ref,value 설정하는 객체의 이름을 넣어줘야한다. 들어가야하는녀석이 value형이면 value에 들어가고 ref(참조하는값 spring.di.entity.NewlecExam) 이기때문에 ref에 들어간다.
+</bean>
+스프링에게 지시서를 넘기고 이대로 객체를 생성해서 조립해달라 라고 부탁을해야한다. 그리고 중요한것은 우리가 이 지시서를 넘길 주체를 아직 안만들었다.
+다음시간에는 주체를 생성해보자
 
 
-
-
-
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 

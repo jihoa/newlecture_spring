@@ -10,9 +10,14 @@ public class Program {
 
 	public static void main(String[] args) {
 		
+		/* 스프링에게 지시하는 방법으로 바꿀것
 		Exam exam = new NewlecExam();
-		ExamConsole console =new InlineExamConsole(exam);	//DI
-//		ExamConsole console =new GridExamConsole(exam);
+		ExamConsole console =new GridExamConsole(exam);
+		console.setExam(exam);
+		*/
+	
+		
+		ExamConsole console=?;
 		console.print();
 	}
 
