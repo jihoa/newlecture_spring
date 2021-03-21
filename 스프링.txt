@@ -1,4 +1,4 @@
-1강 Spring 소개와 학습안내
+a1강 Spring 소개와 학습안내
 
 Spring Framework를 이용해서 웹개발을 해보자
 스프링은 웹개발에서 필수이다.
@@ -224,4 +224,57 @@ id: 그 객체에 어떤 이름을 쓰려고하는지 지정한다.
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+8강 스프링 IoC 컨테이너 사용하기(ApplicationContext 이용하기)
+
+지난 시간에 작성했던 지시서를 읽어서 지시대로 객체를 만들고 그 객체를 활용하는 방법을 알아보자
+
+스프링에서 DI 또는 지시서를 읽어가지고 조립해주는 구체적인 객체는 ApplicationContext이다. 
+
+ApplicationContext context =new ClassPathXmlApplication("config.xml");			//괄호에는 settings.xml 을 넘길것이다.
+ApplicationContext는 인터페이스이다.
+
+ApplicationContext의 종류
+
+ClassPathXmlApplicationContext		//어플리케이션의 루트로 부터 경로를 지정하고 싶을때(루트에뒀다)
+FileSystemXmlApplicationContext		//c드라이브 아래 어디에두었다.
+XmlWebApplicationContext			//web에 두었다.
+AnnotationConfigApplicationContext		//어노테이션에 두었다.
+
+이들의 차이점은 지시서를 넘길때 그녀석의 위치를 어떻게 알려주느냐에따라 달라진다.
+
+스프링 라이브러리가 없어서 ApplicationContext context =new ClassPathXmlApplication("config.xml"); 구문에 에러가 발생했다.
+maven project로 바꿔서 dependency를 추가해서 해결했다.
+프로젝트오른쪽 클릭-> configure-> convert to mavenProject 로 바꾸고 구글에 maven Repository에가서 spring context 최신버전을 추가했다. 
+
+-pom.xml
+  <dependencies>
+  <!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-context</artifactId>
+    <version>5.2.13.RELEASE</version>
+</dependency>
+  </dependencies>
+
+지시서를 잘읽었다면 객체를 두개만들고 인젝션까지 잘해서 IOC컨테이너에다가 담아놨을것이다.
+컨테이너 쓸때는 두가지방식이있다.
+이름으로 꺼낼수도있고, 클래스명으로 꺼낼수도있다.
+
+이름으로 꺼내면 오브젝트로 꺼내져서 형변환을 해서 꺼내야한다.
+ExamConsole console=(ExamConsole) context.getBean("console");
+
+자료형명으로 도 꺼낼수도있다. 자료형명으로 꺼내면 타입명을 문자열로 꺼내는게아니라 ExamConsole(인터페이스)에 맞는 녀석을 찾아서 꺼내달라라는것이다. 
+		ExamConsole console=context.getBean(ExamConsole.class);
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
