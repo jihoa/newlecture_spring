@@ -323,6 +323,138 @@ NewlecExam.java 에서 오른쪽마우스 source->getter and setter 에서 설�
 	<property name="com" value="10"/>
 </bean>
 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+10강 생성자 DI
+
+지난시간에 EXAM이라는 녀석의 국어영어수학의 값을 세터로 설정했는데
+이번시간에는 Setter를 이용해서 세팅해보자
+사용하는 방법은 간단하다. property 대신에 constructor-arg 를 사용하면 된다,
+
+<bean id= "exam" class="spring.di.entity.NewlecExam">
+	<constructor-arg value="30"/>
+	<constructor-arg value="50"/>
+	<constructor-arg value="70"/>
+</bean>
+
+순서대로 30 50 70 이 순서대로 값이 들어간다.
+
+NewlecExam에는 기본생성자도 없는 상태이다.
+기본생성자를 ctrl+space눌러서 생성해주고
+public NewlecExam() {
+	// TODO Auto-generated constructor stub
+}
+
+오버로드 생성자는 오른쪽마우스->source->Constructor using Field 를 누르면된다. 그리고 모든속성을 눌러주고 생성하면된다.
+그리고 super는 의미가 없으니 지워주자
+
+public NewlecExam(int kor, int eng, int math, int com) {
+	this.kor = kor;
+	this.eng = eng;
+	this.math = math;
+	this.com = com;
+}
+
+그렇다면 이것을 이용해서 값을 어떻게 세팅할것이냐?
+
+-pom.xml
+<bean id="exam" class="spring.di.entity.NewlecExam">
+	<constructor-arg value="10"></constructor-arg>
+	<constructor-arg value="20"></constructor-arg>
+	<constructor-arg value="30"></constructor-arg>
+	<constructor-arg value="40"></constructor-arg>
+</bean>
+
+이렇게하면 값 4개를 가지고있는 생성자를 이용해서 값을 세팅한것이다. 이렇게 세팅하면 문제없이 작동한다. 하지만 문제가 생긴다.
+어떤게 수학인지 순서가 헷갈릴수가 있다. 버그를 양성할수도 있는 문제이다.
+순서라는 녀석을 지정할수있어야한다. index 속성값을 사용하면된다.
+
+-pom.xml
+
+<bean id="exam" class="spring.di.entity.NewlecExam">
+	<constructor-arg index="0" value="10"></constructor-arg>
+	<constructor-arg index="1" value="20"></constructor-arg>
+	<constructor-arg index="3" value="30"></constructor-arg>
+	<constructor-arg index="2" value="40"></constructor-arg>
+</bean>
+
+-NewlecExam.java
+//NewlecExam에서는 toString을 오버라이드 해서 순서가 바뀌었는지 확인할것이다.
+
+@Override
+public String toString() {
+	return "NewlecExam [kor=" + kor + ", eng=" + eng + ", math=" + math + ", com=" + com + "]";
+}
+
+-Program.java
+
+Exam exam =context.getBean(Exam.class);				//exam을 직접꺼내올것이다. Exam이라는 녀석에 데이터가 있으면 반환해달라.
+System.out.println(exam.toString());					//그리고 그 Exam을 출력할것이다.
+
+이렇게 index를 쓰지않고 다른방법을 쓸수도 있다. name이라는 녀석이다.
+
+-pom.xml
+
+<bean id="exam" class="spring.di.entity.NewlecExam">
+	<constructor-arg name="kor" value="10"></constructor-arg>
+	<constructor-arg name="eng" value="20"></constructor-arg>
+	<constructor-arg name="com" value="30"></constructor-arg>
+	<constructor-arg name="math" value="40"></constructor-arg>
+</bean>
+
+이렇게 직접 칼럼명을 지정해서 여기다가 값을 지정할수도 있다. 이것이 제일 적합할것이다. 
+
+또다른 옵션이있다.
+
+class NewlecExam
+{
+	public NewlecExam(int kor, int eng, int math){...}
+
+	public NewlecExam(float kor, float eng, float math){...}
+}
+
+억지를 부려서 개수는 같은데 자료형이 다를경우 애매하다. 이름은 같다. 그래서 어떤생성자를 써야하는지 애매할때 쓸수있는 type을 지정할수있는 옵션이 있다.
+
+-pom.xml
+<bean id="exam" class="spring.di.entity.NewlecExam">
+	<constructor-arg name="kor" type="float" value="10"></constructor-arg>
+	<constructor-arg name="eng" type="float" value="20"></constructor-arg>
+	<constructor-arg name="com" type="float" value="30"></constructor-arg>
+	<constructor-arg name="math" type="float" value="40"></constructor-arg>
+</bean>
+
+생성자를 통해서 값을 설정할때 Constructor를 사용할때 태그가 너무 번잡하다 할때 쓸수있는 지시자를 설정할수있다.
+
+설정파일 처리기 추가
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmln:p="http://www.springframework.org/schema/p"			//이부분이 추가됨
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.springframework.org/schema/beans 
+http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+속정 설정 방법
+<bean id="exam" class="spring.di.entity.NewlecExam" p:kor="10" p:eng="20" p:math="30"></bean>
+접두사 p 그리고 속성명을 써주게되면 그속성에다가 값을 설정할수 있다.
+
+그게 bean이라는 태그의 능력이아니고 추가적인 처리기의 도움을 받아서 사용하게된다.
+그래서 처리기를 추가해야한다. Namespaces 에서 p를 클릭해주면 p항목이 추가됐다.
+namespace가 무엇이냐?
+
+프로그래밍 랭귀지는 모듈을 가지고있고 충돌이 날수가있따.
+예를들어 길동이라는 이름이 반에 두명있으면 성으로 구분가능하다.
+그것이 namespace이다. 공교롭게 홍길동이 두명이면 식별할수있도록 다른 확장된 이름을 붙일수있다. 그것이 namespace이다.
+
+bean이라는 녀석을 썼는데 만약에 bean이 두개라고하자. 하나는 객체를 생성하는 bean이고 다른의미의 bean이 있다고하자
+같은문서에 두개의 bean이 있을수 있을까? 충분히 가능하다. 왜냐면 하나의 처리기에 의해서 읽혀지는것이 아니라 두개이상의 처리기에서 읽혀지면 가능하다.
+
+<홍길동:bean></홍길동:bean>		//홍길동이 처리할 bean
+<김길동:bean></김길동:bean>		//김길동이 처리할 bean
+
+앞에다가 이름을 붙여주면 자기가 처리할 bean만 처리하고 넘어가게된다. 접두사라고하는 녀석 namespace라고 하는 녀석을 이용한 태그의 구분은 두가지의 의미를갖는다.
+
+1.태그가 특정한 처리기에 의해서 처리할수있도록 특정
+2.태그의 이름을 식별하기 위해서 사용한다.
 
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
