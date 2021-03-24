@@ -16,9 +16,10 @@ public class GridExamConsole implements ExamConsole {
 
 	@Override
 	public void print() {
-		System.out.println("_____________________");
+		System.out.println("____________________");
+		System.out.println("|__ÇÕ°è_______Æò±Õ____");
 		 System.out.printf("| %3d    | %3.2f    |\n", exam.total(),exam.avg());
-		 System.out.println("_____________________");
+		 System.out.println("____________________");
 	}
 
 	@Override

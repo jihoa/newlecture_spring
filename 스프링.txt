@@ -247,6 +247,7 @@ maven project로 바꿔서 dependency를 추가해서 해결했다.
 프로젝트오른쪽 클릭-> configure-> convert to mavenProject 로 바꾸고 구글에 maven Repository에가서 spring context 최신버전을 추가했다. 
 
 -pom.xml
+
   <dependencies>
   <!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
 <dependency>
@@ -271,8 +272,56 @@ ExamConsole console=(ExamConsole) context.getBean("console");
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+9강 값 형식 DI
 
+우리가 지시할때 꼭 레퍼런스(ref)만 쓰이는것이 아니다. 값(value)도 가능하다. 그 값을 세터를 이용해서 인젝션 하는 방법을 알아보도록 하자.
 
+만약에 자바 코드로 값을 세팅하겠다하면 이렇게 세터를 써서 설정할수 있었을 것이다.
+
+<bean id= "exam" class="spring.di.entity.NewlecExam">
+	<!--
+	exam.setKor(20);
+	exam.setEng(50);
+	exam.setMath(80);
+	-->
+	//지시서에서는 어떻게할까?
+	<property name="kor" value="20"/>
+	<property name="eng" value="50"/>
+	<property name="math" value="80"/>
+
+</bean>
+
+-pom.xml
+	<bean id="exam" class="spring.di.entity.NewlecExam">
+		<property name="kor" value="10"/>						//value값으로 값을 설정해보자
+	</bean>
+	<!-- ExamConsole console =new GridExamConsole(exam); -->
+	<bean id="console" class="spring.di.ui.GridExamConsole">
+		<!-- console.setExam(exam); -->
+		<property name="exam" ref="exam" />
+	</bean>
+
+국어성적만 세팅해서 에러가 난다 에러가 왜 나냐면 kor라는 속성이 유효하지않아서 에러가 나는것이다. setter가 유효하지않다.
+
+exam에 세팅할수있는녀석이 없어서 그렇다 NewlecExam.java에서
+
+NewlecExam.java 에서 오른쪽마우스 source->getter and setter 에서 설정해주면 에러가 해결되었다.
+
+-pom.xml
+<bean id="exam" class="spring.di.entity.NewlecExam">
+	<property name="kor" value="10"/>
+
+	<!--
+	//단일 태그가 아닌 방법으로도 구현이 가능하다.
+	<property name="kor">
+		<value>10</value>
+	</property>
+	-->
+
+	<property name="eng" value="10"/>
+	<property name="math" value="10"/>
+	<property name="com" value="10"/>
+</bean>
 
 
 
