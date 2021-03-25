@@ -459,3 +459,68 @@ bean이라는 녀석을 썼는데 만약에 bean이 두개라고하자. 하나�
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+11 콜렉션 생성과 목록 DI
+
+콜렉션을 생성하는 방법과 콜렉션에 객체를 참조하는 (초기화) 방법을 알아볼것이다.
+콜렉션은 ArrayList가 대표적이다.
+
+-Program.java
+
+List<Exam> exams=new ArrayList<>();		//이녀석을 통해서 참조할 녀석은 Exam이다. Exam을 참조 하기위한 콜렉션으로써
+exams.add(new NewlecExam(1,1,1,1));		//exams에다가 추가할수있다. exam객체를 newlecExam을 추가하자
+		
+for(Exam e: exams)
+	System.out.println(e);
+}
+
+ArrayList라는 녀석을 생성했는데 xml에서 생성해서 값을 초기화하는 방법을 알아볼것이다.
+
+-Program.java
+
+//List<Exam> exams=context.getBean("exams");	// 컨텍스트를 통해서 get하는데 두가지방법이가능 이름or 자료형 이름을 통해서가져오자			
+List<Exam> exams= (List<Exam>) context.getBean("exams") // 참조해서 쓸수있기 위해서 형변환을 해야한다.	
+
+-settings.xml
+<bean id="exams" class="java.util.ArrayList"/>		//exams라는이름의 객체를 클래스는 java.util.arrayList를 만들어달라
+
+잘만들어졌으면 참조하는데 문제가없을것이다.
+
+그렇다면 newlecExam이라는 객체를 xml에서 만들어서 바로 세팅하고싶다면 어떻게할까?
+
+add는 세터가 아니기때문에 property로 세팅이 불가능하다.
+
+ArrayList를 자세히보면 ArrayList에 생성자에 보면 생성자에다가 컬렉션을 대입할수있도록 하는 능력이있다.
+생성자에 대입하는 방식으로 객체로 만들어보자
+
+<bean id="exams" class="java.util.ArrayList">			
+	<constructor-arg>									//construct-arg를 이용해서 값을 설정
+		<list>									//list라는 개념으로 값을 초기화할것이다. 객체를 직접만들어서 초기화할수도있고 위에했던 방법처럼 값을 초기화도 가능하다.
+		 <bean  class="spring.di.entity.NewlecExam" p:kor="1" p:eng="1"/>		//객체를 직접만들어서 초기화 하는 방법
+		<ref bean="exam"/>							//위에있는 객체를 참조해서 만들기 
+		</list>
+	</constructor-arg>
+</bean>
+
+이렇게하면 두개의 항목이 추가된것이다. 하나는 직접추가 하나는 참조
+이러한 방법으로 컬렉션 리스트를 생성자를 넘기는 방식으로 어레이 리스트를 만들게되면은 두개의 객체가
+반복하면서 출력이될것이다.	
+
+이렇게해서 초기화된 컬렉션이 필요하면 정적인 방식으로 xml에서 만들어서 그냥 갖다 쓸수있따.
+
+생성자에다가 목록으로 추가된 ArrayList를 만드는것이아니라 컬렉션을 개별적으로 만드는 방법은 없는가?
+
+그거는 별도의 네임스페이스를 추가해야한다.
+
+util이라는 namespace를 추가하도록하자.
+
+<util:list id="exams" list-class="java.util.ArrayList">			//컬렉션을 만들어줄것인데 추가적으로 리스트가 사용할 클래스를 구체화해야한다.
+	<bean  class="spring.di.entity.NewlecExam" p:kor="1" p:eng="10"/>
+	<ref bean="exam"/>
+</util:list>
+
+위의 <list>는 목록을 세팅할때 사용되는 녀석으로써 객체를 만드는 역할을 하지못한다.
+<util:list>는 같아보이지만 처리기가 다르고 실제로 객체를 만드는 능력이있다.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+

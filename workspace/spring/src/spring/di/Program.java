@@ -1,9 +1,13 @@
 package spring.di;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import spring.di.entity.Exam;
+import spring.di.entity.NewlecExam;
 import spring.di.ui.ExamConsole;
 
 public class Program {
@@ -25,6 +29,12 @@ public class Program {
 		System.out.println(exam.toString());				//그리고 그 Exam을 출력할것이다.
 		ExamConsole console=context.getBean(ExamConsole.class);	
 		console.print();
+		
+		List<Exam> exams= (List<Exam>) context.getBean("exams");//new ArrayList<>();		//이녀석을 통해서 참조할 녀석은 Exam이다. Exam을 참도하기위한 콜렉션으로써
+//		exams.add(new NewlecExam(1,1,1,1));		//exams에다가 추가할수있따. exam객체를 newlecExam을 추가하자
+		
+		for(Exam e: exams)
+			System.out.println(e);
 	}
 
 }
