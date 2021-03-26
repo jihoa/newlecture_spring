@@ -25,9 +25,11 @@ public class Program {
 			new ClassPathXmlApplicationContext("spring/di/settings.xml");
 		
 //		ExamConsole console=(ExamConsole) context.getBean("console");
-		Exam exam =context.getBean(Exam.class);				//exam을 직접꺼내올것이다. Exam이라는 녀석에 데이터가 있으면 반환해달라.
-		System.out.println(exam.toString());				//그리고 그 Exam을 출력할것이다.
-		ExamConsole console=context.getBean(ExamConsole.class);	
+//		Exam exam =context.getBean(Exam.class);				//exam을 직접꺼내올것이다. Exam이라는 녀석에 데이터가 있으면 반환해달라.
+//		System.out.println(exam.toString());				//그리고 그 Exam을 출력할것이다.
+		
+		ExamConsole console=(ExamConsole) context.getBean("console");
+//		ExamConsole console=context.getBean(ExamConsole.class);	
 		console.print();
 		
 //		List<Exam> exams= (List<Exam>) context.getBean("exams");//new ArrayList<>();		//이녀석을 통해서 참조할 녀석은 Exam이다. Exam을 참도하기위한 콜렉션으로써

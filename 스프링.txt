@@ -578,3 +578,54 @@ Autowired라고하면 뭐를 근거로 연결해주는 것일까?
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+13강 @Autowired의 동작방식 이해와 @Qualifier 사용하기
+
+지난시간에 Autowired를 배웠다 DI하는 xml설정을 대신하는 어노테이션 설정인데 사용만해봤고,
+
+xml을 가지고 Di를 했었다. Di를 하기위해서 스프링은 ioc컨테이너를 가지고있다.
+객체를 생성하고 그들을 조립해주는 그런과정의 객체를 담는 그릇이다.
+
+Auto는 자동으로 찾아서 객체를 세팅한다는것인데 뭘 기준으로 찾는것이가?
+1. 자료형?
+2. 변수명?
+
+<bean id="exam1" class="spring.di.entity.NewlecExam" p:kor="20" p:eng="30"/>		// exam을 exam1로 바꾸었다.
+
+이름하고는 상관이없다.
+
+
+자료형에 부합하는것을 찾아서 자동으로 바인딩을 해주는 것이다.
+
+그렇다면 컨테이너에 객체가 두개있다면? 바인딩이 될까?
+
+<bean class="spring.di.entity.NewlecExam" p:kor="10" p:eng="10"/>
+<bean class="spring.di.entity.NewlecExam" p:kor="20" p:eng="30"/>
+
+에러가 난다. 에러메시지를 보면 만족할수있는 디펜던시를 찾아보려고했으나 Exam인데 기대값은 하나였지만 두개가 발견되었다.
+두개가있어서 못한다고 뜬다.
+
+그럴때사용하는 방법은 이름을 똑같이 주면된다.
+
+<bean id="exam" class="spring.di.entity.NewlecExam" p:kor="10" p:eng="10"/>
+<bean class="spring.di.entity.NewlecExam" p:kor="10" p:eng="10"/>
+
+이름이 다르면 불가능하다.
+<bean id="exam1" class="spring.di.entity.NewlecExam" p:kor="10" p:eng="10"/>
+<bean class="spring.di.entity.NewlecExam" p:kor="10" p:eng="10"/>
+
+하지만 @Qualifer를 사용하면 가능해진다.
+
+-inlineExamConsole.java
+
+@Autowired
+@Qualifier("exam1")					//exam1 에 이름에 해당하는 녀석을 찾아서 연결해준다.
+@Override
+public void setExam(Exam exam) {
+	this.exam=exam;
+}
+
+
+
+에러가 났었는데 Exam exam =context.getBean(Exam.class);	 이부분때문에 에러가 발생했다. Exam이라는 녀석을 얻어서 쓰게되있는데 문제가 된다. 그래서 에러가발생했었다.
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
