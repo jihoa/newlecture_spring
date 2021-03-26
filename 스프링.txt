@@ -523,4 +523,58 @@ util이라는 namespace를 추가하도록하자.
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+12 어노테이션을 이용할때의 장점과 @Autowired를 이용한 DI 해보기
+
+JAVA를이용해서 어플리케이션을 만들때는 그 초기화 설정에 해당되는 그런 설정을 할때는 두가지 설정방법이있다.
+1.xml을 이용해서 외부파일에다가 설정정보를 두는방법
+2.어노테이션을 이용해서 코드파일에다가 그 설정을 심는 방법
+
+코드파일에다가 설정을 심을때 사용되는 설정정보가 Annotation이다.
+
+설정을 Annotation으로 바꿔서 해보자
+Annotaiton을 이용했을때 장점?
+
+DI하는 부분을 Annotation으로 바꿀것이다.
+
+xml을 이용해서 모듈 변경할때는
+
+<bean id="b" class="data.B2" />				//data.B2를 B3로 변경하면 되었다.
+<bean id= "console" class=service.S">
+	<property name="b" ref="b"	/>
+</bean>
+
+
+객체를 바꾸면 설정도 같이 바뀌면 안될까? 설정을 바꾸기위해 파일을 열어서 바꾸는것은 귀찮다고 생각해서
+코드에다가 설정을 심는 (메타데이터를) 방법으로 갔다.
+
+설정을 분리하는 방식에서 어노테이션을 이용해서 코드와 같이가지고 가는 방식이 트렌드가  됐다.
+
+xml에서 Annotation으로 바꾸기 위한과정으로
+
+-settings.xml
+
+<bean id="exam" class="spring.di.entity.NewlecExam" p:kor="10" p:eng="10"/>
+<bean id="console" class="spring.di.ui.InlineExamConsole">
+	<property name="exam" ref="exam" />		//1. 이 부분을 뺄것이다 . exam 객체와 console객체를  인젝션해주는 (DI해주는) 객체이다.
+</bean>
+
+이때 사용할수있는 것이 Autowired이다. 콘솔에가면 exam이라는 세터가있고 사용하는 속성이있는데 @Autowired를 붙이면 1번을 지울수있다.
+
+@Autowired			//이렇게하면 <property name="exam" ref="exam" /> 내용이와있는것이다. <bean id="console" class="spring.di.ui.InlineExamConsole"> 객체가 만들어지면 Autowired가 들어간 세터가있는지 찾게된다. 그리고 자동으로 연결된다.
+@Override	
+public void setExam(Exam exam) {
+	this.exam=exam;
+}
+
+하지만 Nullpointer가 발생한다. 지시서에다가 키워드를 심어야한다. 객체를 생성할때 Autowired하는 키워드를 심어놨으니까 있으면 적절한 객체를 참조해달라고해야한다.
+  Context라고하는 namespace가 필요하다.
+
+-settings.xml 
+<context:annotation-config/>
+
+이 한줄 만 추가해주면된다. 객체들이 어노테이션을 갖고있다는 뜻이다. 에러가 안나고 정상적으로 Autowired됐다.
+
+Autowired라고하면 뭐를 근거로 연결해주는 것일까? 
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

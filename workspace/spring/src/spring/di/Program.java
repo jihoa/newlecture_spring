@@ -30,11 +30,11 @@ public class Program {
 		ExamConsole console=context.getBean(ExamConsole.class);	
 		console.print();
 		
-		List<Exam> exams= (List<Exam>) context.getBean("exams");//new ArrayList<>();		//이녀석을 통해서 참조할 녀석은 Exam이다. Exam을 참도하기위한 콜렉션으로써
+//		List<Exam> exams= (List<Exam>) context.getBean("exams");//new ArrayList<>();		//이녀석을 통해서 참조할 녀석은 Exam이다. Exam을 참도하기위한 콜렉션으로써
 //		exams.add(new NewlecExam(1,1,1,1));		//exams에다가 추가할수있따. exam객체를 newlecExam을 추가하자
 		
-		for(Exam e: exams)
-			System.out.println(e);
+//		for(Exam e: exams)
+//			System.out.println(e);
 	}
 
 }
