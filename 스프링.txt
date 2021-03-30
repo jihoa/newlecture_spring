@@ -629,3 +629,65 @@ public void setExam(Exam exam) {
 에러가 났었는데 Exam exam =context.getBean(Exam.class);	 이부분때문에 에러가 발생했다. Exam이라는 녀석을 얻어서 쓰게되있는데 문제가 된다. 그래서 에러가발생했었다.
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+14강 @Autowired의 위치와 required옵션
+
+Autowired는 설정할수 있는 위치가 3군데가 있다. 주의할사항이있어서 이야기하고 required는 언제쓰는지 알아보자
+
+1.Autowired는 세터앞에사용하지않고 필드위에다가 쓸수도있다. 기본생성자에서 객체를 생성하는 경우
+2.오버로드 생성자 앞에다가 도 할수있다.오버로드 생성자에서 객체를 생성하는경우
+3. 세터앞에서 생성하는경우
+
+
+	////////////////////////////////////////////1번위치/////////////////////////////////////////////////////////
+	@Autowired					//기본생성자를 호출하면서 인젝션된다.(기본생성자가 실행)
+	@Qualifier("exam1")				//기본생성자가 없으면 에러가 발생하게된다.
+	private Exam exam;
+	
+	public InlineExamConsole() {
+		// TODO Auto-generated constructor stub
+	}
+	
+	public InlineExamConsole(Exam exam) {
+		this.exam = exam;
+	}
+
+	@Override
+	public void print() {
+		System.out.printf("total is %d, avg is %f\n", exam.total(),exam.avg());
+	}
+	////////////////////////////////////////////2번위치/////////////////////////////////////////////////////////
+	@Autowired					//세터함수 호출되면서 인젝션이 호출 (세터가 실행)
+	@Qualifier("exam1")
+	
+	@Override
+	public void setExam(Exam exam) {
+		this.exam=exam;
+	}
+
+@Autowired				
+@Qualifier("exam1")			//오버로드 생성자 앞에다 붙이면 에러가 발생한다. 하나만 넣을수있는데 두개이상넣을수있다고생각해서 에러가난다. 
+public InlineExamConsole(Exam exam) {
+	this.exam = exam;
+}
+
+
+@Autowired					
+public InlineExamConsole(@Qualifier("exam1")Exam exam1, @Qualifier("exam2")Exam exam2) { //두개이상일때는 각자 지정할수있도록 필드에다가 지정할수있다.	
+	this.exam = exam;
+}
+
+내가 어떤 함수를 실행되면서 인젝션되길 바라는가에 따라서 우치리를 적절하게 골라야한다.
+
+xml파일에 객체가없으면 에러가 날것이다.
+-settings.xml
+<bean id="exam1" class="spring.di.entity.NewlecExam" p:kor="20" p:eng="10"/>
+<bean id="exam2" class="spring.di.entity.NewlecExam" p:kor="20" p:eng="10"/>
+
+이부분이 없으면 에러가난다
+
+만약에 객체가 없을때도 exam==null 을 실행기키고싶다면
+@Autowired의 속성인 requried를 설정하면된다.
+
+@Autowired(required=false) 를 해주면된다.	
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
