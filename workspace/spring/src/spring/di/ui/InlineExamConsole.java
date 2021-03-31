@@ -3,20 +3,21 @@ package spring.di.ui;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Component;
 
 import spring.di.entity.Exam;
 
+@Component("console")
 public class InlineExamConsole implements ExamConsole {
 
-	@Autowired				
-	@Qualifier("exam1")
+	@Autowired(required = false)		
+//	@Qualifier("exam2")
 	private Exam exam;
 	
 	public InlineExamConsole() {
 		System.out.println("constructor");
 	}
 	
-	@Autowired
 	public InlineExamConsole(Exam exam) {
 		System.out.println("overloaded constructor");
 		this.exam = exam;

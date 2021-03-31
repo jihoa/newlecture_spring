@@ -1,4 +1,4 @@
-a1강 Spring 소개와 학습안내
+1강 Spring 소개와 학습안내
 
 Spring Framework를 이용해서 웹개발을 해보자
 스프링은 웹개발에서 필수이다.
@@ -689,5 +689,96 @@ xml파일에 객체가없으면 에러가 날것이다.
 @Autowired의 속성인 requried를 설정하면된다.
 
 @Autowired(required=false) 를 해주면된다.	
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+15강 어노테이션을 이용한 객체 생성
+
+지난시간에 
+
+-inlineExamConsole.java
+
+public class InlineExamConsole implements ExamConsole {
+
+	@Autowired				//DI 방법을 어노테이션으로 옮겨왔다.	
+	private Exam exam;	
+	
+	public InlineExamConsole() {
+		System.out.println("constructor");
+	}
+}
+
+-settings.xml
+
+<context:annotation-config />	
+<bean id="exam" class="spring.di.entity.NewlecExam"/>		// xml에서 객체를 생성하는 방법 을 어노테이션으로 생성하는 방법을 알아볼것이다.
+	
+
+어노테이션으로 객체를 생성하기위해서는 클래스 위에다가 컴포넌트라고하는 @를 붙이면 객체화 되는 작업을한다.
+
+@Component
+public class InlineExamConsole implements ExamConsole {
+
+	@Autowired	
+	private Exam exam;	
+}
+
+근데 이렇게만 쓰면 에러가 난다. 생성된객체의 속을 들여다 볼수없기때문이다. 
+xml안에없으면 들여다볼수없기때문이다.
+
+xml에 설정을 해야한다.
+
+-settings.xml
+
+객체 생성부분을 모두 주석처리하자
+
+<context:component-scan base-package="spring.di.ui"/>	// package명안에 있는 클래스들이 있을텐데 그 클래스를 읽어서 컴포넌트가있는지 찾아서 있으면 객체화 시켜달라
+//<context:annotation-config />			// 이부분은 삭제한다.
+<bean id="exam" class="spring.di.entity.NewlecExam"/>
+
+context:component-scan을 추가해줘야한다.
+component-scan을 추가하면 <context:annotation-config /> 는 없어도 된다 해당클래스를 읽기때문이다.
+
+-Program.java
+
+public class Program {
+
+	public static void main(String[] args) {
+		
+		... 생락...		
+		
+//		//ExamConsole console=(ExamConsole) context.getBean("console");	//콘솔로 찾았다. 이름으로 찾은것
+		ExamConsole console=context.getBean(ExamConsole.class);	// ExamConsole 인터페이스에 부합하는 객체가있으면 얘를 찾아라
+		console.print();
+
+만약에 이름으로 할때는 어떻게할까?
+
+		ExamConsole console=(ExamConsole) context.getBean("console");	
+		//ExamConsole console=context.getBean(ExamConsole.class);	
+		console.print();
+
+xml에서는 id로 했었는데 어노테이션에서는
+
+-InlineExamConsole.java
+
+@Component("console")	// Component 뒤에다가 찾을 이름을 붙여주면된다.
+
+객체를 생성할때는 컴포넌트라는 어노테이션 사용하고 이름을 부여할수있고, xml파일에서는 <context:component-scan base-package="spring.di.ui"/> 설정을 해줘야한다.
+Autowired가 될수있도록 exam 객체도 만들어줘야한다.
+
+-InlineExamConsole.java
+
+@Component("console")	
+//Qualifier("exam2")		//이름을 지정하지않아야  클래스에 해당하는것을 찾기때문에 지워준다.
+
+-NewlecExam.java
+
+@Component		//추가해준다.
+public class NewlecExam implements Exams{
+
+이렇게하면 xml 파일에서는  <context:component-scan base-package="spring.di.ui"/>  newlecExam이 있는 package spring.di.entity;를 뒤지지않아서 안된다
+검색할수 있도록추가해줘야한다.
+ <context:component-scan base-package="spring.di.ui, spring.di.entity"/>
+
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

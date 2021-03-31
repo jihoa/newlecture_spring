@@ -7,10 +7,11 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
-		
-	<context:annotation-config />	
+	
+	 <context:component-scan base-package="spring.di.ui, spring.di.entity"/>
+	<!-- <context:annotation-config/> -->
 	<!-- Exam exam = new NewlecExam(); -->
-	<!-- <bean id="exam1" class="spring.di.entity.NewlecExam" p:kor="20" p:eng="10"/>
+<!-- 	<bean id="exam1" class="spring.di.entity.NewlecExam" p:kor="20" p:eng="10"/>
 	<bean id="exam2" class="spring.di.entity.NewlecExam" p:kor="20" p:eng="10"/> -->
 	
 	<!-- <bean id="exam" class="spring.di.entity.NewlecExam">
@@ -20,10 +21,10 @@
 		<constructor-arg name="math" type="float" value="40"></constructor-arg>
 	</bean> -->
 	<!-- ExamConsole console =new GridExamConsole(exam); -->
-	<bean id="console" class="spring.di.ui.InlineExamConsole">
-		<!-- console.setExam(exam); -->
-		<!-- <property name="exam" ref="exam" /> -->
-	</bean>
+	<!-- <bean id="console" class="spring.di.ui.InlineExamConsole">
+		console.setExam(exam);
+		<property name="exam" ref="exam" />	
+	</bean> -->
 	
 	
 	
