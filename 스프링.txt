@@ -828,6 +828,62 @@ spring을 xml가 어노테이션을 겸해서 해야하는가?
 다음시간에는 xml에서 모든것을 제외하고 다 어노테이션으로 구현할수있도록 config를 자바코드로 작성할것이다.
 
 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+17강 XML Configuration을 Java Configuration으로 변경하기
+
+Config설정을 xml로 다뤘는데 xml안쪽에다가 다양한태그를 이용해서 디펜던시 생성해달라 인젝션해달라 라는 이야기를했다.
+어노테이션이라는것을 이용해서 자바코드에다가 설정을 심고 설정을 xml에서 지우기로했다.
+
+현재 xml에남은 설정은
+
+-settings.xml
+
+<context:component-scan base-package="spring.di.ui, spring.di.entity"/>
+<bean id="exam" class="spring.di.entity.NewlecExam" p:kor="20" p:eng="10"/>
+ 
+두가지 밖에없다.
+
+몇개남겨지지않은내용도 없애고 어노테이션으로 설정할수있게끔할것이다. 
+만약에 스프링이용할때는 설정을 선택하는게좋다. 어노테이션 or xml 섞는것은 별로다.
+
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"...>
+
+</beans>
+
+			↓ 자바 파일로 바꾸기 위해서는
+
+@ComponentScan("spring.di.ui")				//<context:component-scan base-package="spring.di.ui, spring.di.entity"/> 이부분이다.
+@Configuration						//설정파일이다 라는것을 표시하기 위해서 @Configuration을 붙여야한다. 
+public class NewlecAppConfig{
+	@Bean						//객체를 생성하기위한설정이었는데 직접생성하도록 @Bean태그를 사용하자 (@Bean: 만든것을 컨테이너에 담아준다.)
+	public Exam exam(){				//인터페이스로 받기때문에 인터페이스 타입으로 반환해도된다.
+							// bean id="exam" 에서 exam은 exam()와 같다.
+							//<bean id="exam" class="spring.di.entity.NewlecExam" p:kor="20" p:eng="10"/>
+		return new NewlecExam();			// exam()이을 호출하면  new에서 exam()이 만들어낸 객체를 ioc컨테이너에 담는다.
+}
+
+settings.xml 을 이제 더이상 사용하지 않을테니 지워야할까? 지우지 않아도된다. xml설정하는 방식 을 지우면 된다. 
+ spring.di 에다가 자바클래스를 추가하자 .
+되도록이면 설정파일임을 알수있도록 Config를 붙여주자
+
+-Program.java
+
+ApplicationContext context = 
+	new ClassPathXmlApplicationContext("spring/di/settings.xml");
+
+Application Context는 xml을 다루는 것들 3가지(ClassPathXmlApplicationContext,FileSystemXmlApplicationContext,XmlWebApplicationContext) 를 다뤘지만
+이제는 Annotation을 다루는 AnnotationConfigApplicationContext를 사용할것이다. Annotation을 가지고있는 자바파일을 가지고 config로 쓸때 사용한다.
+
+상단의 코드를 바꾸도록하자
+
+-Program.java
+
+ApplicationContext context = 
+	new AnnotationConfigApplicationContext(NewlecDIconfig.class);
+
+
 
 
 

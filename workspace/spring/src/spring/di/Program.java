@@ -1,13 +1,8 @@
 package spring.di;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import spring.di.entity.Exam;
-import spring.di.entity.NewlecExam;
 import spring.di.ui.ExamConsole;
 
 public class Program {
@@ -22,7 +17,8 @@ public class Program {
 		*/
 	
 		ApplicationContext context = 
-			new ClassPathXmlApplicationContext("spring/di/settings.xml");
+//				new ClassPathXmlApplicationContext("spring/di/settings.xml");
+				new AnnotationConfigApplicationContext(NewlecDIconfig.class);
 		
 //		ExamConsole console=(ExamConsole) context.getBean("console");
 //		Exam exam =context.getBean(Exam.class);				//exam을 직접꺼내올것이다. Exam이라는 녀석에 데이터가 있으면 반환해달라.
