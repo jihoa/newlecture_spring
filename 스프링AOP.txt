@@ -276,7 +276,44 @@ public class LogAroundAdvice implements MethodInterceptor {
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+AOP 강좌 05강 - BeforeAdvice
+
+Before형태의 코드를 구현해보자
+
+-settings.xml
+
+	<bean id="target" class="spring.aop.entity.NewlecExam" p:kor="1" p:eng="1" p:math="1" p:com="1"/>
+	<bean id="logAroundAdvice" class="spring.aop.advice.LogAroundAdvice"/>
+	<bean id="logBeforeAdvice" class="spring.aop.advice.LogBeforeAdvice"/>
+	<bean id="proxy" class="org.springframework.aop.framework.ProxyFactoryBean">
+		<property name="target" ref="target"/>
+		<property name="interceptorNames">
+			<list>
+				<value>logAroundAdvice</value>
+				<value>logBeforeAdvice</value>	//두개 동시에 실행하려고 추가했다.
+			</list>
+		</property>
+	</bean>
 
 
 
+-LogBeforeAdvice.java
 
+package spring.aop.advice;
+
+import java.lang.reflect.Method;
+
+import org.springframework.aop.MethodBeforeAdvice;
+
+public class LogBeforeAdvice implements MethodBeforeAdvice {
+
+	@Override
+	public void before(Method method, Object[] args, Object target) throws Throwable {
+		// TODO Auto-generated method stub
+		System.out.println("앞에서 실행될 로직");
+	}
+
+}
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
