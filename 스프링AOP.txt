@@ -140,7 +140,143 @@ public class Program {
 }
  aop는 곁다리업무를 만들고 필요에따라서 뺐다 꽂았다 할수있다.
 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+AOP 강좌 04강 - 스프링으로 AOP 구현해보기-AroundAdvice
+
+스프링 버전의 AOP를 만들어보도록 하자
+AOP-업무로직과 의미가 다른 코드를 뻈다 꽂으려고 분리하는 방식으로 만듦
+
+구현할때는 Cross-cutting Concern ,Core Concern을 proxy의 도움을 받아서 실제 업무로직을 꽂아넣은것처럼 했다.
+
+스프링을 이용하면 더 편해질까?
+
+스프링으로 AOP를 구현하면 더쉽다. 스프링이 직접제공하는 프록시를 쓰고 그녀석이 제공하는 IOC컨테이너에담고 주업무 곁다리업무를 따로만들어서 꽂을수있도록 할것이다.
+
+경우에따라 보조업무를 총 4가지로 구분할것이다.
+
+Before Advice		앞에만 필요한 곁다리 업무
+After returnning Advice	뒤에만 필요한 곁다리 업무
+After throwing Advice	예외를 처리하는 곁다리 업무
+Around Advice	 	앞뒤로 다필요한 곁다리 업무
+
+4가지중에서 가장알맞은 형태를 인터페이스 상속받아서 구현하면 적절한 AOP프로그램이다. 
+
+Around advice를 구현해볼것이다.
+
+
+Spring이 제공하는 방식으로 구현하기위해서, 스프링설정을 할것이다. settings.xml을 복사해서 spring.aop 패키지에다가 넣자
+어노테이션을 쓰는방법과 직접 xml쓰는방법을 할것이기때문에 복사하자
+ApplicationContext context = 
+//				new ClassPathXmlApplicationContext("spring/di/settings.xml");
+				new AnnotationConfigApplicationContext(NewlecDIconfig.class);
+
+-Program.java
+
+ApplicationContext context = new ClassPathXmlApplicationContext("spring/aop/settings.xml");		//xml을사용해서 설정파일을 구성
+
+Settings구현된상태에서 xml 에다가 세가지를 설정할것이다.
+
+1. Exam객체를 생성하는 코드
+2. Proxy를 생성하는코드
+3. 곁다리를 생성하는코드
+
+
+스프링을 이용해서 구현할떄는 특별한것은 모든 설정을 xml파일에서 했다. 도킹관계를 설정으로 뺌으로해서 프로그램파일들이 그런 설정들을 가질필요가 없다.
+
+-settings.xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
+		 
+	<bean id="target" class="spring.aop.entity.NewlecExam" p:kor="1" p:eng="1" p:math="1" p:com="1"/>	//1.Exam 객체를 생성하는 코드
+	<bean id="logAroundAdvice" class="spring.aop.advice.LogAroundAdvice"/>
+	<bean id="proxy" class="org.springframework.aop.framework.ProxyFactoryBean">			// 2. Proxy를 생성하는코드 class명은 패키지명을 다외워야하는 스펠링 틀릴수있어서 java파일에가서 쳐보고 복붙하자
+		<property name="target" ref="target"/>						//실제 객체 name은 세터메서드이고 ref는 참조한다는뜻(value일때는 value를 사용한다.)
+		<property name="interceptorNames">						//곁다리업무 핸들러를 넣어줄떄는 interceptorNames를 세터로해서 넣어준다. s여서 여러개 넣을수있다. list형태로
+			<list>
+				<value>logAroundAdvice</value>					//참조하고 있는 녀석의 name
+			</list>
+		</property>
+	</bean>
+	
+	
+</beans>
+
+
+-Program.java
+
+package spring.aop;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import spring.aop.entity.Exam;
+import spring.aop.entity.NewlecExam;
+
+public class Program {
+
+	public static void main(String[] args) {
+		
+		ApplicationContext context = 
+				new ClassPathXmlApplicationContext("spring/aop/settings.xml");
+		Exam proxy= (Exam) context.getBean("proxy");
+		
+		System.out.printf("total is %d\n", proxy.total());
+		
+	}
+
+}
+
+
+-LogAroundAdvice.java
+
+package spring.aop.advice;
+
+import org.aopalliance.intercept.MethodInterceptor;
+import org.aopalliance.intercept.MethodInvocation;
+
+public class LogAroundAdvice implements MethodInterceptor {
+
+	@Override
+	public Object invoke(MethodInvocation invocation) throws Throwable {
+		
+		long start=System.currentTimeMillis();
+		
+		Object result =invocation.proceed();
+		
+		long end = System.currentTimeMillis();
+		
+		String message=(end-start)+"ms 시간이 흘렀다.";
+		System.out.println(message);
+		
+		
+		return result;
+	}
+
+}
+
+스프링을 이용하면 결합로직을 뺐다 꽂았다 할수있기떄문에 수정이 전혀없고 원하는 목적을 달성가능했다.
+
+
+
 
 
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
