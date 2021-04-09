@@ -315,5 +315,57 @@ public class LogBeforeAdvice implements MethodBeforeAdvice {
 
 }
 
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+AOP 강좌 06강 - After Returning / Throwing 어드바이스 구현하기
+
+실행순서
+1. Before Advice		앞에만 필요한 곁다리 업무
+2. 메인업무
+3. After returnning Advice	뒤에만 필요한 곁다리 업무
+4. After throwing Advice	예외가 발생하면 실행된다.
+(Around Advice	 	앞뒤로 다필요한 곁다리 업무) 전체적으로
+
+
+
+
+-LogAfterReturningAdvice.java
+
+package spring.aop.advice;
+
+import java.lang.reflect.Method;
+
+import org.springframework.aop.AfterReturningAdvice;
+
+public class LogAfterReturningAdvice implements AfterReturningAdvice {
+
+	@Override
+	public void afterReturning(Object returnValue, Method method, Object[] args, Object target) throws Throwable {
+		// 반환값을 가지고 할것이 있으면해라, 필요없으면 안써도된다.
+		System.out.println("returnValue:"+returnValue+", method:"+method.getName());
+		
+	}
+
+}
+
+
+-LogAfterThrowingAdvice.java
+package spring.aop.advice;
+
+import org.springframework.aop.ThrowsAdvice;
+
+public class LogAfterThrowingAdvice implements ThrowsAdvice {
+	//밑줄이 안그어진다. 왜냐면 Throw가 구현해야할 함수가 정해지지않아서이다.
+	//	얘는 어떤 예외가 발생하느냐에따라서 달라져서  그렇다.
+	public void afterThrowing(IllegalArgumentException e) throws Throwable{
+		System.out.println("예외가 발생하였습니다.: "+e.getMessage());
+	}	
+	
+}
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
