@@ -368,4 +368,30 @@ public class LogAfterThrowingAdvice implements ThrowsAdvice {
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+AOP 강좌 07강 - Point Cut(Weaving, Join Point)
+
+proxy를갖고있다. proxy를 통해서 곁다리업무를 꽂는다. 꽂아넣는 작업을 뜨개질 한다 그것을 Weaving이라고 부른다. 그리고 할지점을 Join Point라고 부른다.
+
+기본적으로 target으로 삼고있는녀석이있으면 모든녀석을 join포인트로 생각한다. 만약에 나는 avg말고 total메서드만 위빙이됐으면할때 별도의 정보가 필요한데 그녀석을 포인트 컷이라고 부른다.
+
+-settings.xml
+
+<bean id="classicPointCut" class="org.springframework.aop.support.NameMatchMethodPointcut">
+	<property name="mappedName" value="total" /><!--토탈함수만 위빙이되도록하려면 세터를 사용해줘야한다.  -->
+</bean><!-- 포인트컷을 위한 클래스 생성  -->
+	
+<bean id="classicBeforeAdvisor" class="	org.springframework.aop.support.DefaultPointcutAdvisor">
+	<property name="advice" ref="logBeforeAdvice"/><!-- org.springframework.aop.framework.ProxyFactoryBean"가 가지고있는 메서드중에 SetAdvice를 호출하는것 (암묵적으로 소문자 변환 advice) -->
+	<property name="pointcut" ref="classicPointCut"/>
+</bean>
+
+<bean id="classicAroundAdvisor" class="	org.springframework.aop.support.DefaultPointcutAdvisor">	
+	<property name="advice" ref="logAroundAdvice"/><!-- org.springframework.aop.framework.ProxyFactoryBean"가 가지고있는 메서드중에 SetAdvice를 호출하는것 (암묵적으로 소문자 변환 advice) -->
+	<property name="pointcut" ref="classicPointCut"/>
+</bean>	
+
+불편해보이는건 어드바이저 여러개 만들어야하는 불편사항이있다. 어드바이스 하나당 어드바이저 하나
+이건 최초버전이고 다양한 버전이있다. 
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 

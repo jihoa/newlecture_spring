@@ -8,11 +8,26 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.3.xsd">
 		 
-	<bean id="target" class="spring.aop.entity.NewlecExam" p:kor="101" p:eng="1" p:math="1" p:com="1"/>
+	<bean id="target" class="spring.aop.entity.NewlecExam" p:kor="1" p:eng="1" p:math="1" p:com="1"/>
 	<bean id="logAroundAdvice" class="spring.aop.advice.LogAroundAdvice"/>
 	<bean id="logBeforeAdvice" class="spring.aop.advice.LogBeforeAdvice"/>
 	<bean id="logAfterReturningAdvice" class="spring.aop.advice.LogAfterReturningAdvice"/>
 	<bean id="logAfterThrowingAdvice" class="spring.aop.advice.LogAfterThrowingAdvice"/>
+	
+	<bean id="classicPointCut" class="org.springframework.aop.support.NameMatchMethodPointcut">
+		<property name="mappedName" value="total" /><!--토탈함수만 위빙이되도록하려면 세터를 사용해줘야한다.  -->
+	</bean><!-- 포인트컷을 위한 클래스 생성  -->
+	
+	<bean id="classicBeforeAdvisor" class="	org.springframework.aop.support.DefaultPointcutAdvisor">
+		<property name="advice" ref="logBeforeAdvice"/><!-- org.springframework.aop.framework.ProxyFactoryBean"가 가지고있는 메서드중에 SetAdvice를 호출하는것 (암묵적으로 소문자 변환 advice) -->
+		<property name="pointcut" ref="classicPointCut"/>
+	</bean>
+
+	<bean id="classicAroundAdvisor" class="	org.springframework.aop.support.DefaultPointcutAdvisor">	
+		<property name="advice" ref="logAroundAdvice"/><!-- org.springframework.aop.framework.ProxyFactoryBean"가 가지고있는 메서드중에 SetAdvice를 호출하는것 (암묵적으로 소문자 변환 advice) -->
+		<property name="pointcut" ref="classicPointCut"/>
+	</bean>	
+	
 	<bean id="exam" class="org.springframework.aop.framework.ProxyFactoryBean">
 		<property name="target" ref="target"/>
 		<property name="interceptorNames">
