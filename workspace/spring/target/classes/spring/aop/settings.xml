@@ -14,26 +14,51 @@
 	<bean id="logAfterReturningAdvice" class="spring.aop.advice.LogAfterReturningAdvice"/>
 	<bean id="logAfterThrowingAdvice" class="spring.aop.advice.LogAfterThrowingAdvice"/>
 	
-	<bean id="classicPointCut" class="org.springframework.aop.support.NameMatchMethodPointcut">
-		<property name="mappedName" value="total" /><!--토탈함수만 위빙이되도록하려면 세터를 사용해줘야한다.  -->
-	</bean><!-- 포인트컷을 위한 클래스 생성  -->
+	<!-- <bean id="classicPointCut" class="org.springframework.aop.support.NameMatchMethodPointcut">
+		<property name="mappedName" value="total" />토탈함수만 위빙이되도록하려면 세터를 사용해줘야한다. 
+	</bean>포인트컷을 위한 클래스 생성 
 	
 	<bean id="classicBeforeAdvisor" class="	org.springframework.aop.support.DefaultPointcutAdvisor">
-		<property name="advice" ref="logBeforeAdvice"/><!-- org.springframework.aop.framework.ProxyFactoryBean"가 가지고있는 메서드중에 SetAdvice를 호출하는것 (암묵적으로 소문자 변환 advice) -->
+		<property name="advice" ref="logBeforeAdvice"/>org.springframework.aop.framework.ProxyFactoryBean"가 가지고있는 메서드중에 SetAdvice를 호출하는것 (암묵적으로 소문자 변환 advice)
 		<property name="pointcut" ref="classicPointCut"/>
 	</bean>
-
+	
 	<bean id="classicAroundAdvisor" class="	org.springframework.aop.support.DefaultPointcutAdvisor">	
-		<property name="advice" ref="logAroundAdvice"/><!-- org.springframework.aop.framework.ProxyFactoryBean"가 가지고있는 메서드중에 SetAdvice를 호출하는것 (암묵적으로 소문자 변환 advice) -->
+		<property name="advice" ref="logAroundAdvice"/> org.springframework.aop.framework.ProxyFactoryBean"가 가지고있는 메서드중에 SetAdvice를 호출하는것 (암묵적으로 소문자 변환 advice)
 		<property name="pointcut" ref="classicPointCut"/>
-	</bean>	
+	</bean>	 -->
+	
+	<bean id="classicBeforeAdvisor" class="org.springframework.aop.support.NameMatchMethodPointcutAdvisor"><!-- 포인트컷과 어드바이저가 합친것을 만들어보자 -->
+		<property name="advice" ref="logBeforeAdvice"/>
+		<property name="mappedNames" value="total"/>
+	</bean>
+	
+<!-- 	<bean id="classicAroundAdvisor" class="org.springframework.aop.support.NameMatchMethodPointcutAdvisor">	
+		<property name="advice" ref="logAroundAdvice"/> 
+		<property name="mappedNames" >
+			<list>
+				<value>total</value>
+				<value>avg</value>
+			</list>
+		</property>
+	</bean> -->
+	<bean id="classicAroundAdvisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">	<!--패턴이 가능한 어드바이저 정규식을 사용할수있게 Regexp어드바이저를 쓰자  -->
+		<property name="advice" ref="logAroundAdvice"/> 
+		<property name="patterns" >
+			<list>
+				<value>.*to.*</value>	<!-- 정규식에는 .은 anyCharacter *은 0개이상  .*to.*: to가들어간 캐릭터를 찾자  -->
+			</list>
+		</property>
+	</bean>
+
+	
 	
 	<bean id="exam" class="org.springframework.aop.framework.ProxyFactoryBean">
 		<property name="target" ref="target"/>
 		<property name="interceptorNames">
 			<list>
-				<value>logAroundAdvice</value>
-				<value>logBeforeAdvice</value>
+				<value>classicBeforeAdvisor</value>
+				<value>classicAroundAdvisor</value>
 				<value>logAfterReturningAdvice</value>
 				<value>logAfterThrowingAdvice</value>
 			</list>

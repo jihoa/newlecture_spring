@@ -395,3 +395,71 @@ proxy를갖고있다. proxy를 통해서 곁다리업무를 꽂는다. 꽂아넣
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+AOP 강좌 08강 - 간소화된 Advisor
+
+지난시간에 포인트컷을 다뤄보면서 원하는 메서드만 위빙될수있도록 경계썬을 두는것은 중요하다. 그런데 포인트 컷을 사용할때 또 다른 요소라고 할수있는 어드바이저를 
+들어와야만하는 그것을 설정하는 부분이 불편했다.
+
+개별적으로 꽂아서 여러개만들수있지만, 어드바이저와 포인트컷을 합치는 작업이 필요하다라고 생각할수 있다.
+
+	-settings.xml
+
+	<!-- <bean id="classicPointCut" class="org.springframework.aop.support.NameMatchMethodPointcut">
+		<property name="mappedName" value="total" />토탈함수만 위빙이되도록하려면 세터를 사용해줘야한다. 
+	</bean>포인트컷을 위한 클래스 생성 
+	
+	<bean id="classicBeforeAdvisor" class="	org.springframework.aop.support.DefaultPointcutAdvisor">
+		<property name="advice" ref="logBeforeAdvice"/>org.springframework.aop.framework.ProxyFactoryBean"가 가지고있는 메서드중에 SetAdvice를 호출하는것 (암묵적으로 소문자 변환 advice)
+		<property name="pointcut" ref="classicPointCut"/>
+	</bean>
+	
+	<bean id="classicAroundAdvisor" class="	org.springframework.aop.support.DefaultPointcutAdvisor">	
+		<property name="advice" ref="logAroundAdvice"/> org.springframework.aop.framework.ProxyFactoryBean"가 가지고있는 메서드중에 SetAdvice를 호출하는것 (암묵적으로 소문자 변환 advice)
+		<property name="pointcut" ref="classicPointCut"/>
+	</bean>	 -->
+
+
+	//////////////////////////////////////////////////// 바뀌기 전후///////////////////////////////////////////////////////////////
+	
+	<bean id="classicBeforeAdvisor" class="org.springframework.aop.support.NameMatchMethodPointcutAdvisor"><!-- 포인트컷과 어드바이저가 합친것을 만들어보자 -->
+		<property name="advice" ref="logBeforeAdvice"/>
+		<property name="mappedNames" value="total"/>
+	</bean>
+	
+	<bean id="classicAroundAdvisor" class="org.springframework.aop.support.NameMatchMethodPointcutAdvisor">	
+		<property name="advice" ref="logAroundAdvice"/> 
+		<property name="mappedNames" value="total"/>
+	</bean>
+
+	//////////////////////////////////////////////////// 포인트컷이 사용할 함수가 여러개일때///////////////////////////////////////////////////////////////
+
+	<bean id="classicAroundAdvisor" class="org.springframework.aop.support.NameMatchMethodPointcutAdvisor">	
+		<property name="advice" ref="logAroundAdvice"/> 
+		<property name="mappedNames" >
+			<list>
+				<value>total</value>
+				<value>avg</value>
+			</list>
+		</property>
+	</bean>
+
+	//////////////////////////////////////////////////// 함수명이 여러개일때 패턴으로 지정하는법///////////////////////////////////////////////////////////////
+
+	<bean id="classicAroundAdvisor" class="org.springframework.aop.support.RegexpMethodPointcutAdvisor">	<!--패턴이 가능한 어드바이저 정규식을 사용할수있게 Regexp어드바이저를 쓰자  -->
+		<property name="advice" ref="logAroundAdvice"/> 
+		<property name="patterns" >
+			<list>
+				<value>.*to.*</value>	<!-- 정규식에는 .은 anyCharacter *은 0개이상  .*to.*: to가들어간 캐릭터를 찾자  -->
+			</list>
+		</property>
+	</bean>
+
+
+
+전에는 포인트컷을 만들고 결합하는 작업을했었는데 따로만들지않고 어드바이저 자체가 포인트컷기능을 같이 설정할수있도록 했다.
+
+
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
