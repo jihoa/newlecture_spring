@@ -1,0 +1,54 @@
+Spring MVC (스프링 웹 MVC) 강의방향 안내
+
+스프링 MVC의 두가지 버전
+
+TomCat: 톰캣을 가지고 스프링없이 웹개발할수있다.
+그떄는 web.xml에 설정했었는데 web.xml에다가 사용할라이브러리들을 썼다.
+스프링을 쓰면 web.xml에 spring Dispatcher라는것을 쓴다.
+
+Tomcat
+Tomcat Configuration
+-web.xml
+	-Spring Dispatcher
+	-MyBatis			//사용할 라이브러리들
+	-Tiles			//사용할 라이브러리들
+	-...
+
+
+Tomcat
+Tomcat Configuration
+-web.xml
+	-Spring Dispatcher
+	
+
+
+Spring Web
+Spring Configuration
+	-Servlet		|
+	-Service		|
+	-Security		}- XML,Annotation,java 로 설정한다.
+	-MyBatis		|	
+	-Tiles		|	
+	-...
+
+스프링 MVC는 프론트 컨트롤러를 제공한다.
+
+web.xml에다가 spring Disapatcher를 올리면 스프링이 모든것을 관리하려고한다. Spring Configuration으로 mybatis,tiles등등이 옮겨지게된다.
+
+설정하는 방법이 버전에따라서 달라졌다. 주로 현재 전자정부프레임은 xml+annotation 조금이고 현재는 Java로 Configuration하고있다. 
+스프링을 가지고 개발하다보면 다 다른방식으로 개발해서 구분이 잘안되고 설정하는 것이 버전에따라서 달라서 
+
+설정을 도와줄수있는 스프링부트가 나왔다. spring mvc를 대신하는것이아니고 설정을 모아서 편하게 설정할수있는 부가적인 프레임 워크이다. 스프링에다가 스프링부트를 얹으면 복잡한설정을 피할수있다.
+
+
+Spring Boot
+Starter Configuration	//Starter는 필요한것들 (servlet,service,security)등등을 묶어서 라이브러리로 가지고있다.
+application.properties( 설정파일)		//일반적으로 이걸더 많이 쓰인다.
+또는
+YAML(설정파일)
+
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
