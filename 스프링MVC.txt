@@ -116,8 +116,80 @@ Spring에서 제공하는 개발환경도구
 부트를 가지고 개발해도 좋으나
 
 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Spring MVC (스프링 웹 MVC) 강의 03 - 메이븐을 이용한 기본 웹 프로젝트 생성하기
+
+
+지난시간에 spring web project를 만들기위해 실행환경으로써 톰캣을 다운받았고, 프로젝트를 개발하기 위해서 사용되는 스프링툴스를 받았다.
+이것을 이용해서 빈프로젝트(스프링 배제하고 ,maven기반) 으로 만들고 다음시간에 spring을 다음시간에 얹는 작업을 할것이다.
+
+프로젝트를 만들때 Create new Spring Starter Project는 스프링 부트를 기반으로 해서 만드는 프로젝트인데 스프링에 스프링부트를 얹은녀석이다.
+
+오늘은 기본적인 웹프로젝트를 만들것이다. perspective -> javaEE-> Create a Maven project
+
+Create a simple project(skip archetype selection) 체크
+Use default Workspace location 체크
+
+다음
+packaging: war 로 변경
+
+만들어지면 pom.xml에 빨간줄이 그어진다.  에러메세지는 web.xml이 없어서 에러가난것이다. web.xml 은 어디에 둬야하는가?
+webapp안에 webinfo를 만들고 그안에다 둘것이다.
+
+
+apache-tomcat-9.0.38/webapps/ROOT/WEB-INF 를 복사해서 src/main/webapp 에다가 넣어주면 된다. 이렇게 붙여넣어주면 pom.xml에 에러가 사라진다.
+
+java resources를 보면 jdk가 1.5로 되어있다. pom.xml 에서 overview 로 가서 properties에서 create에서 Name: maven.compiler.source Value:1.8
+로적어주면 추가가된다. 그리고 복사해서 붙여넣어서
+
+ <maven.compiler.source>1.8</maven.compiler.source>		//1.8쓸거고
+ <maven.compiler.target>1.8</maven.compiler.target>		//대상도 1.8버전이다.
+그리고 보면 안바뀌어있다. pom.xml에 변경사항이 생긴다면 프로젝트에서 오른쪽 클릭을하고 maven-> update Project라는 버튼을 누르자
+update를 하고나면 제대로 바뀌었다.
+
+jsp 파일을 추가 할것인데 preference->Web->JSP Files
+Korean,EUC-KR을 ISO 10646/Unicode(UTF-8)로 바꿔주도록 하자
+
+html,css도 똑같이 바꿔주자
+
+프로젝트->Properties->Resource-> 인코딩을 UTF-8로 바꿔주자
+
+web-app 아래에 jsp파일을 추가해주면에러가난다. 왜 에러가나냐면? jsp 관련된 톰캣라이브러리가 없어서 그렇다.
+
+pom.xml에 추가할것인데 구글에서 maven tomcat api 를 검색해서 톰캣 버전에맞게 클릭을 하면 코드가 뜨는데 그것을 복붙해주면된다.
+
+-pom.xml
+	.....	
+	.....
+  <packaging>war</packaging>
+  <dependencies>
+  <!-- https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-api -->
+	<dependency>
+    	<groupId>org.apache.tomcat</groupId>
+    	<artifactId>tomcat-api</artifactId>
+    	<version>9.0.41</version>
+	</dependency>
+  </dependencies>
+  <properties>
+  	<maven.compiler.source>1.8</maven.compiler.source>
+ 	<maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+</project>
+
+이렇게 하면 JSP파일에 에러가 사라진다. 
+그리고 JSP 를 실행하면 실행환경이 구축이 안되어있다. apache Tomcat9.0을 설정하자
+그리고 톰캣폴더를 지정해주자
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
 
 
 
