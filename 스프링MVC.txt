@@ -301,9 +301,73 @@ disapatcher를 이용하려고 하는데 서블릿으로 설정했고 모든 URL
 
 그리고 이파일에다가는 무엇을 넣어야할까 다음시간에 알아보자
 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Spring MVC (스프링 웹 MVC) 강의 06 - 스프링 컨트롤러 IndexController 작성하기
+
+지난시간에 스프링이 제공하는 mvc를 지원한 라이브러리인 dispatcher 라이브러리 그 녀석이 사용하는 설정파일이있다.
+그것이 바로 dispatcher-servlet이라는 파일인데 그것을 작성하고 indexController를 POJO 기반으로 스프링의 도움을 받아서 작성해보도록할것이다.
+
+어떤 구문으로 어떻게 작성할수있는지 알수없다. dispatcher를 만든 스프링에서 레퍼런스를 참조해야한다.
+
+https://docs.spring.io/spring-framework/docs/
+
+core를 클릭하고 
+
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="..." class="...">  // beans:어떤 클래스를 설정하면 얘를 객체화해서 스프링컨테이너에 담게 된다. id는 class를 꺼내서 사용할떄쓰는건데 mvc는 다르게 사용한다 . url을 쓴다.
+        <!-- collaborators and configuration for this bean go here -->
+    </bean>
+
+    <bean id="..." class="...">
+        <!-- collaborators and configuration for this bean go here -->
+    </bean>
+
+    <!-- more bean definitions go here -->
+
+</beans>
+를 복붙해서 넣어주면된다. 
+
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="/index" class="com.newlecture.web.controller.IndexController">		//mvc는 스프링이기떄문에 컨테이너에 담겨진것을 사용한다. /index라는url 요청이오면 com.newlecture.web.controller.IndexController를 객체화해서 호출한다. 
+        <!-- collaborators and configuration for this bean go here -->
+    </bean>
+
+</beans>
+
+남아있는 spring에 dispatcher라는 클래스(프론트 컨트롤러)가 컨테이너에서 꺼내가지고 얘가 가지고있는 기능을 호출해주는것만 남았는데
+그걸 하기위해서 두가지를 해야한다. url 과 컨트롤을 매핑한 정보를 id라는 것을 이용해서 url을 쓰게 되어있는데 이게 bean이라고 하는걸 등록이 되면 컨텐츠가 담겨지는것이다.
+Controller에는 POJO 형식으로 만들어놓은 녀석들이 있는데,  Dispatcher에서 Controller를 사용하려면 약속되어있는 어떤게 있어야할것같다.
+
+사용자가 index요청을 했으면 요청에 수반할수있는 함수가있어야한다. 그함수명은 약속이되어있어야하나?
+그렇다 그것은 handleRequest이다. Dispatcher가 제공하는 약속이 인터페이스가 있다. 그것을 구현해야한다.
+
+약속을 수반하는 인터페이스를 구현해야한다.
 
 
+모델앤뷰라는 녀석이 반환되면 dispatcher에게 가고 dispatcher가 포워딩해서 뷰를 찾아서 모델을 전달  view에서 그모델을 사용해서 사용자에게 출력한다.
+
+실행해보면 404에러가 난다. 톰캣의 어노테이션쓸려면 매핑주소를 읽어서 요청해주는데, 톰캣이 모르는  POJO클래스니까 클래스가아니까 소스코드로 반환하는일이 발생한다.
+우리가 원하는건 url매핑된 정보이다. 그래서 http://localhost:8080/webprj/index 를 요청하면 잘될까?
+
+안된다. 왜 안되냐면 web.xml에 보면 url매핑했던부분 <url-pattern>/*</url-pattern> 이 문제다.
+*를 쓰면 포워딩이든 get요청을 하든 DispatcherServlet를 다시거쳐가야한다. index를 거쳐서 com.newlecture.web.controller.IndexController를 요청을 했는데
+dispatcher-servlet.xml 에 index.jsp의 내용이 없어서 에러가 발생한다. 그래서
+<url-pattern>/</url-pattern> 별을 뺀다.
+
+DispatcherServlet를 거치기는 하지만 리소스에서 찾아보지만 없으면 리소스에 직접 요청하게해준다. 잘 나왔따. 처음부터 그럼 별을 빼면되는데 왜안뻈을까 다음시간에 알아보자
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 
