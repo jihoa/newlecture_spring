@@ -429,5 +429,50 @@ http://localhost:8080/index 그런데 하필 동일하게 매핑된 주소가 �
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+Spring MVC (스프링 웹 MVC) 강의 08 - ViewResolver 사용하기
+
+지난시간에 뷰페이지를 WEB-INF안에 view로 옮겼다. 그렇게 함으로써 뷰페이지를 찾는 방법이 복잡해졌다. 왜냐면 WEB-INF를 붙여야하고 view라는 폴더도 있으니까
+그래서 복잡해졌기때문에 쉽게 찾을수 있도록 ViewResolver라는 녀석을 사용할것이다.
+
+-IndexController.java
+
+ModelAndView mv = new ModelAndView("/WEB-INF/view/index.jsp");
+
+컨트롤러 만드면서 view페이지를 WEB-INF에 둠으로써 찾는방법이 복잡해진것이다. 그래서 보면 지난시간에 다뤘던 내용에서는 ModelAndView를 기본생성자로 만들고
+jsp라고하는 페이지가 있는 그 경로가 setViewName이라고하는 세터를 이용해서 설정했는데 오버로드된 생성자 이용해서도 설정을 많이한다.(오버로드 방법을 더 많이씀)
+1. 세터 설정방법
+ModelAndView mv = new ModelAndView();
+mv.setViewName("/WEB-INF/view/index.jsp");
+
+2.오버로드 생성자 설정 방법
+ModelAndView mv = new ModelAndView("/WEB-INF/view/index.jsp");
+
+경로를 쓰는방법이 복잡해졌다. IndexController 하나에서만 쓰는게 아니라 다른것도 써야한다.
+어떻게 해야하냐면 /WEB-INF/view/    .jsp 를 빼고  view페이지인 index만 쓸수있게해야한다.
+
+-IndexController.java
+
+ModelAndView mv = new ModelAndView("index");
+
+그러면 모든컨트롤러가 깔끔하게 쓸수있다. 그러면 index만 반환해서 디스패처가 받으면 그런리소스가 없으니 404나는게 아니냐?
+전달된거에다가 /WEB-INF/view/    .jsp 를 붙여서 찾게 해주는것이 viewResolver이다.
+앞뒤에 붙여서 실제적인 view페이지를 찾을수있게 해주는 능력자이다.
+
+dispatcher-servlet.xml 에 ViewResolver를 설정하도록하자.
+
+org.springframework.web.servlet.view.InternalResourceViewResolver 를 스펠링이 틀릴수가 있으니 java파일에서 ViewResolver를 찾아서 import 시키고 그것을 복붙해오자
+
+-dispatcher-servlet.xml 
+
+<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	<property name="prefix" value="/WEB-INF/view/"></property>
+	<property name="suffix" value=".jsp"></property>
+</bean>
+
+해주면 제대로 동작한다.
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 
