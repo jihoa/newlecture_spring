@@ -8,7 +8,9 @@
         https://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
     <bean id="/index" class="com.newlecture.web.controller.IndexController"/>
-	
+    <bean id="/notice/list" class="com.newlecture.web.controller.notice.ListController"/>
+    <bean id="/notice/detail" class="com.newlecture.web.controller.notice.DetailController"/>
+    
 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/WEB-INF/view/"></property>
 		<property name="suffix" value=".jsp"></property>
