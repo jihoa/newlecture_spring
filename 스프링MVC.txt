@@ -621,6 +621,46 @@ index.jsp에서 header라는 부분을 분리하자
 
 공통분모가 페이지마다 있으면 집중화를 위해서 빼야한다.
 
+aside와 layout 등등도 따로 뻈다.
+
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+Spring MVC (스프링 웹 MVC) 강의 15 - Tiles 지시서 작성하기
 
+지난시간에 페이지에서 나타나는 공통분모를 inc에다가 묶어놨다. tile를 이용해서 엮어 내는 작업을 해야하는데, 지시서를 작성해야한다. 
+
+tiles를 사용하기위해서 apache.org를 들어가도록하자.
+
+tiles는 페이지를 합쳐주는 라이브러리인데 프론트로 옮겨가고있는 상태여서 tiles는 은퇴했다고 뜬다.
+이거를 배워야할까? 현재에는 백이나 프론트에서 페이지를 합칠수있기때문에 일단 배워두자
+
+/WEB-INF/tiles.xml에다가 공식문서가 적힌대로 설정하도록하자.
+
+-/WEB-INF/tiles.xml
+
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+  <definition name="myapp.homepage" template="/layouts/classic.jsp">
+    <put-attribute name="title" value="Tiles tutorial homepage" />
+    <put-attribute name="header" value="/tiles/banner.jsp" />
+    <put-attribute name="menu" value="/tiles/common_menu.jsp" />
+    <put-attribute name="body" value="/tiles/home_body.jsp" />
+    <put-attribute name="footer" value="/tiles/credits.jsp" />
+  </definition>
+</tiles-definitions>
+
+위치는 달리해도되지만 기본이 여기라고하니까 여기다가 두도록하자.
+
+-ListController.java
+
+public class ListController implements Controller{
+
+	@Override
+	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelAndView mv = new ModelAndView("notice.list");	// 컨트롤러가 notice.list로 반환하면 이걸가지고 tiles를 호출해서 페이지를 조합해서 반환할것이다.	
+	}
+
+}
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

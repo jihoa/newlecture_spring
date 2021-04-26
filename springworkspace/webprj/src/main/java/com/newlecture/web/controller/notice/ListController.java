@@ -10,7 +10,7 @@ public class ListController implements Controller{
 
 	@Override
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		ModelAndView mv = new ModelAndView("notice/list");				
+		ModelAndView mv = new ModelAndView("notice.list");				
 //		mv.setViewName("/WEB-INF/view/notice/list.jsp");					//set해서 view에대한 정보를담는다. index.jsp
 		return mv;	
 	}
