@@ -723,4 +723,35 @@ tiles와 관련된 라이브러리는 가져오지않아서 뜨지않는다. mav
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+Spring MVC (스프링 웹 MVC) 강의 17 - Tiles ViewResolver 설정하기
+
+Tiles를 이용하기위해서 layout완성했고 layout 페이지를 만들기위해서 라이브러리를 포함시켰다. 남은것은 하나다.
+notice.list를 가지고 페이지를 합치는 과정이 필요하다. 그것을 찾아주는녀석이 ViewResolver이다.
+
+Resolving을 하려면 지시서가 어디있는지 알아야한다.
+
+- dispatcher-servlet.xml
+<bean
+	class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+	<property name="viewClass"
+		value="org.springframework.web.servlet.view.tiles3.TilesView" />
+	<property name="order" value="1" />						// resolver가 두개가있다면 order라는 속성으로 우선순위를 지정해주는것이다.
+</bean>
+
+<bean
+	class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+	<property name="definitions" value="/WEB-INF/tiles.xml" />			// tiles가 사용하는 configure를 어디서 찾느냐? 여기서 찾는다.
+</bean>
+
+
+
+이렇게하고 꼼수파일 index를 실행하게되면 에러가나온다. 클래스가없다는 에러이다. 라이브러리를 하나 추가하도록하자.
+
+javax.servlet jstl라이브러리를 추가하자.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
 
