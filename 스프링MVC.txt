@@ -751,6 +751,51 @@ javax.servlet jstl라이브러리를 추가하자.
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+Spring MVC (스프링 웹 MVC) 강의 18 - Tiles 설정에 Wildcard 이용하기
+
+지난시간에 tiles 설정을 끝내고 목록페이지를 볼수있었는데 비효율적인 부분이 보여서 수정하려고한다.
+
+  <definition name="notice.list" template="/WEB-INF/view/customer/inc/layout.jsp">
+    <put-attribute name="title" value="공지사항" />
+    <put-attribute name="header" value="/WEB-INF/view/inc/header.jsp" />
+    <put-attribute name="visual" value="/WEB-INF/view/customer/inc/visual.jsp" />
+    <put-attribute name="aside" value="/WEB-INF/view/customer/inc/aside.jsp" />
+    <put-attribute name="body" value="/WEB-INF/view/customer/notice/list.jsp" />
+    <put-attribute name="footer" value="/WEB-INF/view/inc/footer.jsp" />
+  </definition>
+   <definition name="notice.detail" template="/WEB-INF/view/customer/inc/layout.jsp">
+    <put-attribute name="title" value="Tiles tutorial homepage" />
+    <put-attribute name="header" value="/WEB-INF/view/inc/header.jsp" />
+    <put-attribute name="visual" value="/WEB-INF/view/customer/inc/visual.jsp" />
+    <put-attribute name="aside" value="/WEB-INF/view/customer/inc/aside.jsp" />
+    <put-attribute name="body" value="/WEB-INF/view/customer/notice/detail.jsp" />
+    <put-attribute name="footer" value="/WEB-INF/view/inc/footer.jsp" />
+  </definition>
+
+새로운페이지가 추가된다면  
+   <definition name="notice.detail" template="/WEB-INF/view/customer/inc/layout.jsp">
+    <put-attribute name="title" value="Tiles tutorial homepage" />
+    <put-attribute name="header" value="/WEB-INF/view/inc/header.jsp" />
+    <put-attribute name="visual" value="/WEB-INF/view/customer/inc/visual.jsp" />
+    <put-attribute name="aside" value="/WEB-INF/view/customer/inc/aside.jsp" />
+    <put-attribute name="body" value="/WEB-INF/view/customer/notice/detail.jsp" />
+    <put-attribute name="footer" value="/WEB-INF/view/inc/footer.jsp" />
+  </definition>
+이런형태로 복붙해야되는데 아무래도 아닌것같다.
+그래서 사용할 방법은 와일드 카드이다.
+
+  <definition name="notice.*" template="/WEB-INF/view/customer/inc/layout.jsp">		//list가오든 detail이 오든 notice.으로 시작하면 다 합쳐진다.
+    <put-attribute name="title" value="공지사항" />
+    <put-attribute name="header" value="/WEB-INF/view/inc/header.jsp" />
+    <put-attribute name="visual" value="/WEB-INF/view/customer/inc/visual.jsp" />
+    <put-attribute name="aside" value="/WEB-INF/view/customer/inc/aside.jsp" />
+    <put-attribute name="body" value="/WEB-INF/view/customer/notice/{1}.jsp" />		//첫번째 와일드카드에 해당하는 값이오면 값을 사용할수도있다.
+    <put-attribute name="footer" value="/WEB-INF/view/inc/footer.jsp" />
+  </definition>
+
+와일드카드를 사용하는 방법은 여러가지가있다. tiles공식문서를 참조해보자
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
