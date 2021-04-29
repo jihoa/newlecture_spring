@@ -839,3 +839,72 @@ entity,service 패키지를 추가했고 DB에 CREATE query 문도 실행해야�
 
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Spring MVC (스프링 웹 MVC) 강의 21 - 서비스 객체 사용하기
+
+노티스 서비스객체를 가져왔는데 엔티티 클래스도 같이 가져왔다.
+이 두가지를 이용해서 데이터베이스에서 데이터 쿼리를 하고 그 결과를 뷰에서 바인딩해서 결과물을 문서해서 볼수있도록 할것이다.
+
+Oracle을 사용해야하므로 라이브러리가 필요하다.
+dependecies에서 oracle을 검색하고 최신버전을 추가하도록 하자.
+
+드라이버도 다운로드 받았으니까 데이터베이스를 사용할수있는데, notice service라는 녀석에 객체를 어떻게 생성할지가 문제이다.
+
+일단 사용할때는 noticelistController에서 사용할것이다.
+
+스프링은 di라는 기능을 기본적으로 지원하고 있다. 그래서 한번 생성한 객체를 다양한 컨트롤러가 활용할수있게 갖다 쓸수가있다.
+
+스프링이 제공하고있는 프론트 컨트롤러를 사용하고있다. 그녀석의 이름-servlet.xml 파일에다가 bean이라는 태그로 무언가를 설정했다.
+<bean id="/index" class="NoticeController" />			
+
+그러면 여기에 설정했던 내용들은 IOC Container에 담겨진다.  그녀석의 이름-servlet.xml를 스프링이 읽게되면 IOC Container에 담겨진다.
+갖다 쓸수도있고 스프링이 dipatcher에서 가져다 쓴다.
+
+<bean class="NoticeService> 라고 한줄을 더 추가하면 IOC Container에 생성된다.  IOC Container에 담겨지면 전역적으로 사용할수있는 객체 보따리이다.
+그래서 다른 컨트롤러도 쓸수있다.
+
+문제는 보따리에 있는 녀석을 어떻게 사용할까가 문제이다.
+
+-dispatcher-servlet.xml
+
+<bean id="noticeService" class="com.newlecture.web.controller.service.NoticeService"/>		//패키지명을 입력해야한다.
+이렇게하면 IOC Container에 담겨진다. 그럼 이걸 어떻게 쓸거냐? DI를 할것이다.
+
+하는방법은
+원래있던 코드인
+  <bean id="/notice/list" class="com.newlecture.web.controller.notice.ListController"/>
+를
+
+  <bean id="/notice/list" class="com.newlecture.web.controller.notice.ListController"/>
+	<property name="noticeService" ref="noticeService">			//name에는 ListController가 가지고있는 세터를 써줘야한다. ref에는 bean객체의 이름을 써줘야한다.
+ </bean>
+
+
+
+-ListController.java
+
+
+public class ListController implements Controller{
+
+	private NoticeService noticeService;		//세터가 필요하다. 세터는 클래스 멤버로 존재 가능하다.
+	
+	public void setNoticeService(NoticeService noticeService) {
+		this.noticeService = noticeService;
+	}
+
+	@Override
+	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelAndView mv = new ModelAndView("notice.list");			
+		List<Notice> list=noticeService.getList(1, "TITLE", "");			//반환하고있는 내용은 List 를 받아와서
+		mv.addObject("list",list);		// 모델로 리스트가 전달되었다.
+		
+		return mv;	
+	}
+
+}
+
+
+일단 DB에 예시들 넣어보기
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
