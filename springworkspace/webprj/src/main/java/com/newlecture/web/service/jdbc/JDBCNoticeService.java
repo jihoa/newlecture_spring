@@ -1,4 +1,4 @@
-package com.newlecture.web.controller.service;
+package com.newlecture.web.service.jdbc;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -11,9 +11,10 @@ import java.util.Date;
 import java.util.List;
 
 import com.newlecture.web.entity.Notice;
+import com.newlecture.web.service.NoticeService;
 
 
-public class NoticeService {
+public class JDBCNoticeService implements NoticeService {
 	private String url = "jdbc:oracle:thin:@localhost:1521/xepdb1";
 //	private String url = "jdbc:oracle:thin:@192.168.77.1:1521/xepdb1";
 	private String uid = "NEWLEC";
