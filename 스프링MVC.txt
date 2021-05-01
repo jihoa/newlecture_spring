@@ -984,3 +984,75 @@ pom.xml에서 라이브러리가 추가해야한다. org.spring-jdbc를 추가�
 	
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Spring MVC (스프링 웹 MVC) 강의 24 - 스프링 설정파일 분리하기
+
+오늘은 spring을 이용할때 쓰는 xml파일을 바꾸려고한다.
+
+xml파일을 WEB-INF 디렉토리안에다가 정해진 이름을 썼었다. 
+정해진 위치에다가 뒀었다. 이파일을 다른위치나 다른이름으로 바꾸면 인식이 안되었다.
+
+일반적으로는 이렇게 정해져있는 이름을 쓰지않고 원하는 위치에다가 원하는 파일로 만들어내기도한다.
+오늘 할일은 하나로 되어있는 xml파일을 여러개로 나눌것이다. 
+
+WEB-INF 폴더를 생성하고 dispatcher-servlet을 복붙한다.
+그리고 하단의 코드만 남기고 지우고 3개를 복사하자.
+
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc
+        https://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+</beans>
+
+이름을 마음대로 정할수있다. 이왕만드는거 이름을 servlet-context, service-context,security-context 로 만들어보자
+
+그러면 굳이 3개로 나눈 이유는 무엇일까?
+프로젝트를 한사람이 만드는것이아니라 여러사람들이 역할을 나눠서 만들게 된다. 
+
+하나의 파일로 만들게되면 덮어쓰고 기다리고 동기화과정을 거치게된다. 그래서 따로 역할을 나눠서 작업을 하는것이다.
+
+servlet에는 입출력, 껍데기에 대한설정을 넣고
+service는 service에 대한 설정을 넣는다.
+security에는 보안 설정을 넣을것이다.
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+  version="4.0"
+  metadata-complete="true">
+	
+	//두개의 파일 지정하는 법
+	<listener>											// 스프링이 지원하는 리스너 톰캣또는 세션이 시작 or 끝날때 뭔가 해결할수있는 이벤트를 처리할때 사용하는 녀석
+  		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  	</listener>
+  	<context-param>							//Context param이라고 가질수가있다. 아래의 contextConfigLocation을 써서 얘가 리스너를 사용해서 결국 3개의 xml파일을 설정할수 있는것이다.
+  		<param-name>contextConfigLocation</param-name>
+		<param-value>
+			/WEB-INF/spring/service-context.xml
+			/WEB-INF/spring/security-context.xml
+		</param-value>
+	</context-param>
+
+	<servlet>									
+		<servlet-name>dispatcher</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>	// web.xml에 설정파일이 어디있다고 말하지 않았어서 기본적인 약속되어있는 위치 약속되어있는 파일명으로 되어있어야한다. 파일 디렉토리를 바꾸면 이야기해줘야한다.
+		<init-param>								
+			<param-name>contextConfigLocation</param-name>			//세터같은 녀석으로 스펠링이 틀리면안된다.
+			<param-value>/WEB-INF/spring/servlet-context.xml</param-value>		// 서블릿 관련된 녀석의 위치를 넣어주면된다.
+		</init-param>
+	</servlet>
+
+서블릿이라는 녀석이 언제 메모리에 올라가느냐? url 매핑되어있고 첫번째 요청이 오면 올라간다.
+우선순위를 높이고 싶다면 
+<load-on-startup>숫자</load-on-startup> 을 사용해주면된다
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
