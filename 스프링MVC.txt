@@ -924,4 +924,63 @@ JDS를 바꿨다고 에러가 되지않는다. 꽂아넣을때 인터페이스�
 
 
 인터페이스: 구현하는것은 없고 약속을 정하는 녀석
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Spring MVC (스프링 웹 MVC) 강의 23 - 연결정보 분리하기
+
+Notice Service를 사용하고있는 데이터베이스 연결정보도 별도의 클래스를 만들어서 분리할것이다.
+연결문자열들이있다.
+private String url = "jdbc:oracle:thin:@localhost:1521/xepdb1";
+private String uid = "NEWLEC";
+private String pwd = "1234";
+private String driver = "oracle.jdbc.driver.OracleDriver";
+ 이거를 자바코드에다가 직접 박아놨는데 이렇게되면 힘든것이 배포하게되었을때(배포할때 바이너리코드로 배포된다) 만약에 패스워드를 주기적으로 바꿔야할때
+바이너리로 배포되어있는 것에서 단순하게 비밀번호만바꾸면되는데 소스코드없이 단순히 바꾸는것은 불가능하다.
+
+소스코드변경후에 컴파일하고 재배포해야한다. 데이터베이스가 만약에 위치가 바뀌었다고 하면 소스코드 구해서 변경하고 컴파일 재배포해야한다.
+이런방법은 합당하지 않은것 같다.
+
+그래서 변경에대한 부분들을 xml에다가 둘것이다. xml에서 객체화 된 녀석을 DI할것이다. xml파일은 텍스트 그대로 배포되기 때문에 배포에 용이하다.
+배포하기위해서  객체로 담을 생각이다. 
+
+-JDBCNoticeService.java
+
+public class JDBCNoticeService implements NoticeService {
+	private DataSource dataSource;				//url uid pwd driver 네개를 하나로 묶어서 담을수  있는 인터페이스가 있다. 그것이 데이터 소스이다, 이녀석은 클래스가 아니라 인터페이스다. 이 데이터소스는 실제 객체화할수없다. 
+	public void setDataSource(DataSource dataSource) {		//public해서 세터도 만들어 주어야한다.
+		this.dataSource = dataSource;			
+	}
+
+	public List<Notice> getList(int page, String field, String query) throws ClassNotFoundException, SQLException{
+		
+		int start = 1 + (page-1)*10;     // 1, 11, 21, 31, ..
+		int end = 10*page; // 10, 20, 30, 40...
+		
+		String sql = "SELECT * FROM NOTICE_VIEW WHERE "+field+" LIKE ? AND NUM BETWEEN ? AND ?";	
+		
+//		Class.forName(driver);
+//		Connection con = DriverManager.getConnection(url,uid, pwd);
+		Connection con= dataSource.getConnection();				// 위 의 주석 코드대신에 데이터소스를 만들어서 커넥션을 만들것이다. 커넥션을 만들것이다. 
+		PreparedStatement st = con.prepareStatement(sql);
+		st.setString(1, "%"+query+"%");
+
+남은것은 하나다. dataSource가 null을 가지고있을텐데 여기다가 어떤객체를 만들것이고 어떻게 꽂아넣어야할지 고민해야한다.
+
+-dispatcher-servlet.xml
+
+<bean id="noticeService" class="com.newlecture.web.service.jdbc.JDBCNoticeService">	//서비스가 세터를 가지고있다. DataSource를 DI할수있는 세터가있다.
+	<property name="dataSource" ref="dataSource"/>				//Property로 꽂아넣을것이다.
+</bean>
+
+<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">		
+	<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>		// 세터는 마음대로 할것은 아니고 클래스가 가지고있는 세터를 적어줘야한다. 각각 driverClassName,url,username,passowrd이다.
+	<property name="url" value="jdbc:oracle:thin:@localhost:1521/xepdb1"/>		
+	<property name="username" value="NEWLEC"/>
+	<property name="password" value="1234"/>
+</bean> 
+
+pom.xml에서 라이브러리가 추가해야한다. org.spring-jdbc를 추가해주자
+	
+
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
