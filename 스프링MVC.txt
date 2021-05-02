@@ -1054,5 +1054,81 @@ security에는 보안 설정을 넣을것이다.
 우선순위를 높이고 싶다면 
 <load-on-startup>숫자</load-on-startup> 을 사용해주면된다
 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Spring MVC (스프링 웹 MVC) 강의 25 - 객체 DI를 Annotaion으로 변경하기
+
+이 강의 부터는 조금조금씩 xml 파일로 되어있는 스프링 설정을 Annotaion으로 변경할것이다.
+서비스 객체를 사용할때 xml에서 직접 DI할수있었는데, 스프링은 2점대 부터 Annotation을 사용할수 있었다.
+어노테이션 방식으로 바꿔보면서 과거 방식에서 요즘 방식으로 바꿔보자
+
+스프링, 자바 어플리케이션 을 사용하는 방식은 크게 두가지가 있다.
+
+1. xml 고전적으로 사용해왔던 텍스트파일을 이용해서 외부설정을하고.
+2. Annotation 요즘에 많이 사용하는 방식
+
+두 설정은 장단점이 있다.
+
+스프링에서는 거의 모든것들을 Annotation이나 자바설정으로 바꾸려고한다.
+최근에는 자바 설정도아니고 텍스트파일로 가기는 하는데 더 경량화된 property나 yaml으로 더 간단한 방식으로 가고있다.
+
+바뀌어가고있는 과정에서 서비스객체를 DI하는 과정만 Annotation으로 바꿔볼것이다. 그리고 하나씩 하나씩 바꿀것이다.
+
+-servlet-context.xml
+
+			...
+
+<bean id="/notice/list" class="com.newlecture.web.controller.notice.ListController">
+	<property name="noticeService" ref="noticeService"/>		//이부분을 지울것이다. 지우면 에러가 발생할것이다. DI가 안되면 NullPointerException 발생
+ </bean>
+			...
+
+
+바꿀 부분은 이부분인데 여기서 처럼 xml에서 di를 할수도 있지만 이걸 어노테이션으로도 가능하다.
+
+-ListController.java
+
+public class ListController implements Controller{
+		
+	@Autowired
+	private NoticeService noticeService;
+	
+								//여기에다가 Autowired를 적을 것이다. 할수있는 이유는 이 소스코드에 손댈수 있기때문이다. 직접만드는 경우 Autowired가 편하다.
+	public void setNoticeService(NoticeService noticeService) {
+		this.noticeService = noticeService;
+	}
+
+	@Override
+	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		ModelAndView mv = new ModelAndView("notice.list");					//set해서 view에대한 정보를담는다. index.jsp
+		List<Notice> list=noticeService.getList(1, "TITLE", "");
+		mv.addObject("list",list);		
+		return mv;	
+	}
+
+}
+
+설정을 더해야한다.
+
+-servlet-context.xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"					//추가
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        		https://www.springframework.org/schema/beans/spring-beans.xsd
+        		http://www.springframework.org/schema/mvc
+        		https://www.springframework.org/schema/mvc/spring-mvc.xsd
+        		http://www.springframework.org/schema/context					//추가
+        		https://www.springframework.org/schema/context/spring-context.xsd">			//추가
+
+<context:annotation-config/>									//추가 : annotation으로 config를 넣었다  안넣으면 NullpointerException 발생
+
+service-context.xml 도 똑같이 적용했다.
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
