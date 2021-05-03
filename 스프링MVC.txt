@@ -1223,3 +1223,57 @@ servlet-context.xml에서도 이녀석을 붙여줘야한다.
 요즘에는 스프링을 이렇게 사용한다. 다음시간에는 컨트롤러의 이름을 바꿀것이다.
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Spring MVC (스프링 웹 MVC) 강의 28 - HomController 만들기
+ 
+지난시간에  어노테이션에 적용하는 방법에 초점이 맞춰져있었기 때문에 컨트롤러가 컨트롤 형태가 아니게 만들어졌었는데
+오늘은 indexController를 컨트롤러 답게 만들어볼것이다.
+
+-IndexController.java
+@Controller
+public class IndexController{
+	@RequestMapping("/index")
+	public void aaaa() {
+		System.out.println("asdfsdf");
+	}
+
+
+고쳐야 할것이 3가지가 있다.
+
+1. IndexController 컨트롤러가 url 매핑되는것이아니다. 어떻게 위치시켜야할까
+2. data라는모델 view라는 페이지를 심었는데 view 가 tiles를 심었는데 이런 view를 심는방법
+3.tiles를 이용해서 원래페이지를 매칭시키게 해야한다.
+
+첫번째로 더이상 url이 클래스와 매핑되지않는다. 매핑되는 것은 클래스가 아니라 함수이다. 이 클래스안에는 함수가 하나만왔는데 이제 여러개가 와도된다.
+
+@Controller
+public class IndexController{
+	@RequestMapping("/index")
+	public void aaaa() {			//이름을 막써도 된다 하지만 관련있는 이름으로 바꿔주자
+		System.out.println("asdfsdf");
+	}
+	@RequestMapping("/help")
+	public void aaasdfsdaa() {
+		System.out.println("asdfsdf");
+	}
+
+이런식으로 두개가 와도된다. url매핑된 함수가 두개인것이다.
+이제 컨트롤러의 이름을 바꿔야한다. index와 help 둘다 담을수있는 이름으로 바꿀것이다.
+HomeController로 이름을 바꿀것이다. 이제는 폴더개념으로 바뀌었기때문에 home에 존재하는 컨트롤러를 담는그릇이라고 봐도 무방하다.
+
+이제 인덱스라고하는 메서드가 있는데 콘솔에서 출력하는게아니라 뷰 정보를 전달해야한다.
+public void aaaa() {	
+	System.out.println("asdfsdf");
+}
+view와 모델을 담을 수있는 그릇을 만들어서 반환했는데 
+
+@RequestMapping("/index")
+	public String index() {			//반환타입을 view라는 녀석을 반환하기위해서 String으로 바꿈
+		return "root.index";			//tiles에서 resolving이 가능해진다.
+	}
+
+달라진점은 
+1.HomeController가 더이상 직접 컨트롤러가아니고 컨트롤러를 담기위한 컨테이너로써 사용한다,
+2. 뷰페이지만들기위해 단순하게 문자열을 반환하면 뷰를 간단하게 찾을수있다.
+notice라는 컨트롤러를 한번 이방식대로 만들어보자
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
