@@ -1276,4 +1276,63 @@ view와 모델을 담을 수있는 그릇을 만들어서 반환했는데
 1.HomeController가 더이상 직접 컨트롤러가아니고 컨트롤러를 담기위한 컨테이너로써 사용한다,
 2. 뷰페이지만들기위해 단순하게 문자열을 반환하면 뷰를 간단하게 찾을수있다.
 notice라는 컨트롤러를 한번 이방식대로 만들어보자
+
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Spring MVC (스프링 웹 MVC) 강의 29 -컨트롤러 정리하기
+
+지난시간에 indexcotroller를 annotation을 썼다 그러면서 중요한점은 RequestMapping 이라는 어노테이션을 썼는데, 컨트롤러를 만드는것이 애매할수도있다.
+클래스단위로 url매핑시키는게아니라 함수단위로 url매핑시키니까 실질적인 컨트롤러는 함수가된다. 그러면 함수는 어떻게 정리하는것이 좋을까?
+
+클래스자체가 url매핑되는게 아니라 하나의 클래스안에 모든 컨트롤러 다만들수있다.
+이렇게하면 코드량이 너무많아져서 ,객체수가 너무 많아서 관련되어있는것들끼리 묶어서 협업하기도 어렵다.
+ notice관련된것은 빼는것이 좋을것같다 .notice에서 사용하는 data service가 있으면 그녀석도 떼는것이 좋다.
+
+view
+-customer
+	-event
+	-faq
+	-inc
+	-notice
+		-detail.jsp
+		-list.jsp
+-inc
+	-index.jsp
+이렇게 폴더 구성이 되어있다면 이걸 기준으로 컨트롤러를 생각하면 간단하다. 행위들을 갖고있는 울타리라고 볼수있다. 
+대상이라고 하는 녀석들이 갖고있는 기능집합을 묶어줄수있는 녀석들을 단위로 클래스를 만들면된다. notice
+
+customer는 대상에 해당되는 것에 더큰대상이니 패키지로 만들면된다.
+
+
+@Controller					//객체화하기위해서 꼭 써야한다.
+@RequestMapping("/customer/notice/")
+public class NoticeController {
+	
+	@Autowired
+	private NoticeService noticeService;
+	
+	@RequestMapping("list")	
+	public String list() {			//문자열을 뷰정보로 반환한다.
+		try {
+			List<Notice> list=noticeService.getList(1, "TITLE", "");
+		} catch (ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "notice.list";
+	}
+	
+	@RequestMapping("detail")	
+	public String detail() {
+		return "notice.detail";
+	}
+
+servlet-context.xml에서 index notice detail notice list bean 객체도 삭제해주도록하자.
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
