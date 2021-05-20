@@ -31,7 +31,15 @@
 		<property name="order" value="2" />
 	</bean>
 	<mvc:resources location="/static/" mapping="/**"></mvc:resources>
-	<mvc:annotation-driven/><!-- 역할은 @Controller 는 @Component와 같은 역할을 한다. mapping은 반드시 이녀석으로 해야한다.  -->
-
-
+	<mvc:annotation-driven><!-- 역할은 @Controller 는 @Component와 같은 역할을 한다. mapping은 반드시 이녀석으로 해야한다.  -->
+		<mvc:message-converters> <!-- 어노테이션으로 요청을하고 그결과를  @ResponseBody형식으로 반환된다면 그것을 가로채기해서 그거를 변환해주는 기능을 담당한다. -->
+		<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+			<property name="supportedMediaTypes">
+				<list>
+					<value>text/html;charset=UTF-8</value>
+				</list>
+			</property>
+		</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
 </beans>

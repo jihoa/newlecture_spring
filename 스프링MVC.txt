@@ -1432,5 +1432,73 @@ Front Controller의 역할은 재호출이다.
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+Spring MVC (스프링 웹 MVC) 강의 32 - @RestController와 한글출력 설정
+
+restController는 문서를 만들어서 제공해주는것이아니라 주로 데이터를 제공해주는것이 주된 역할을 하는 컨트롤러이다.
+이걸 쓰면서 문제가 되는 점이 한글 출력이 문제가 된다.
+한글 출력이 문제가없도록 어떤걸 설정해야하는지 알아보자.
+
+프로젝트를 진행하다보면 스크립트를 만드는 사람들에게 문서를 줄것이아니라 데이터를 줘야되는 경우가 발생한다.
+그럴경우에는 컨트롤러에가서 controller에다가 마우스오른쪽클릭해서 클래스를 추가할것이다.
+
+패키지명은 com.newlecture.web.controller.api이 될것이다. 데이터를 제공해주는 그런 컨트롤러이다.
+NoticeController라고 이름을 정해보자 기존에 컨트롤러와 똑같이 작성할수 있긴 한데
+클래스 위에 @Controller 라고 어노테이션을 붙이면 일반적으로 문서를 기반으로  하는 반환값을 갖고있는 컨트롤러이다.
+
+@RestController 라고 하면 좀 특화된 컨트롤러이다. 출력되는것 자체가 rest-ful 한 결과물을 나타내는 클래스라고 할수있다.
+
+-NoticeController.java
+
+package com.newlecture.web.controller.api;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController							
+@RequestMapping("/api/notice/") 		//notice에 대한 데이터의 목록을 주는 식이다.
+public class NoticeController {
+		
+	@RequestMapping("list")
+	public String list() {
+		
+
+		return "notice list";			//@RestController는 여기에 반환하는 값을 반환하게된다.
+	}	//NoticeController noticeController= new Notice Controller라고 하는 녀석을 담을것이다. 뽑아오기위해서 변수선언하듯이 앞글자가 소문자된 noticeController 를 키값으로 가져온다.
+}		// xml 형식으로 표현하게되면 <bean id= "noticeController" class=".....NoticeController > 현재 noitceController가 있어서 모호해서 에러가 나는 것이다.
+
+이렇게 실행하면 충돌 에러가 난다. 왜 에러가 나냐면
+
+식별자 붙일때 묵시적으로 지정하지않아서 오류가나는것이다. 그러면 @RestController 뒤에다가 이름을 붙여주면된다. @RestController("apiNoticeController")
+이렇게하면 묵시적으로 부여해서 충돌이 나지않을것이다.
+
+자바스크립트 개발자에게 데이터를 제공할때는 RestController를 만들어서 제공할것인데 공지사항이라는 글자를 한글로 바꾸어보자
+return "notice list";	 에서 notice를 공지사항으로 바꾸자 한글이 깨졌다. 어떻게 해결할것이냐면 우리가 가야할곳은 servlet-context를 클릭해서 열어보면
+annotation:driven 이 있는데 annotation:driven 은 우리가 작성하고있는 url과 관련된 요청이 있을때 어노테이션을 통해서 수반될수 있도록 해주는 그런녀석이다.
+<mvc:annotation-driven/>이 이렇게 닫혀있는데 열어줘야한다.
+
+열고 다음과 같이 설정해주자
+
+<mvc:annotation-driven><!-- 역할은 @Controller 는 @Component와 같은 역할을 한다. mapping은 반드시 이녀석으로 해야한다.  -->
+		<mvc:message-converters> <!-- 어노테이션으로 요청을하고 그결과를  @ResponseBody형식으로 반환된다면 그것을 가로채기해서 그거를 변환해주는 기능을 담당한다. -->
+		<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+			<property name="supportedMediaTypes">
+				<list>
+					<value>text/html;charset=UTF-8</value>
+				</list>
+			</property>
+		</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+
+이걸 가져다 써도 에러가 날수도있다. 코드를 다른데서 작성한다음에 가져와야한다. 
+
+restController를 활용해서 자바스크립트를 가지고 프론트에서 개발하는 사람들이 따로있다하면 제공해주는 것을 배웠고
+다음시간에는 자동으로 json형태로 반환해주지 않기때문에 json형태로 반환하는것을 배울것이다. 
+
+notice객체를 json형태로 자동반환해주는 객체를 만들것이다.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 
 
