@@ -1429,6 +1429,98 @@ Front Controller의 역할은 재호출이다.
 
 우리는 void로 안했다. tiles를 쓰고있기떄문에 string을 반환해서 view정보를 반환하고 tilesResolver가 그걸찾아서 실행해서 결과값으로 문서를 전달하는 그런 방식을 사용했었다.
 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Spring MVC (스프링 웹 MVC) 강의 31 - 문서 출력방법 4가지 @ResponseBody
+
+지난시간에는 url 매핑하기위한 방법을 알아봤다.
+컨트롤러에서 출력하는 방법도 달라질것같다. 스프링을 이용해서 출력하는 방법이 4가지가있다. 
+
+
+1. 서블릿객체를 얻어서 문자열 출력하기
+2. @ResponseBody 설정을 통한 문자열 출력하기
+3. ResourceViewResolver를 이용한 문서 출력하기
+4. TilesViewResolver를 이용한 문서 출력하기
+
+지난시간에는 view라는것을 문서화하고 그 문서화된 내용을 resolver로 통해서 출력하는것을 다뤄봤다.
+
+우리가 많이쓰는 옵션은 또 뭐냐면 단순하게 문자열을 만들어서 출력하고 싶을때도 있다.
+그럴경우에는 방법이 두가지가있다. servlet객체를 이용해서 얻어가지고 출력하는 방법이있고,
+또는 Response body라고한 설정을 통해서 문자를 출력하는 방법이있다.
+
+4가지중에서 선택적으로 잘사용할수있어야한다.
+
+가장 기본적인 방법부터 알아보자
+
+@Controller
+@RequestMapping("/")
+public class HomeController{
+	
+	@RequestMapping("index")
+	public void index() {					//void를 반환하니 리턴값이없다. 이렇게되면 Resolver를 사용하지 않겠다는 뜻이다.
+		
+	}
+
+그러면 어떻게 출력할까?
+
+FrontController가 스프링이 제공하고있는 컨트롤러인데 이녀석을 통해서 요청이 걸러서 온다 . 이 컨트롤러가 호출된 함수명을 보는것이 아니라
+@RequestMapping이라고 하는 주석에 달려있는 녀석을 보고 괄호안에있는 녀석을 호출해준다.
+
+만약에 컨트롤러에서 매개값을 안주면 그냥 호출하지만, 
+ex)
+
+-Controller
+public void index() {
+	
+}
+
+-Front Controller
+void service(HttpRequest request, Http... response){
+	method.invoke();
+}
+
+
+
+매개값을 선언해주면  front Controller에서 호출되기전에 값이 있는지 확인해보고 그값을 제공할수있는지 확인해본 다음 제공할수있으면 Controller가 달라고 하니까
+ FrontController가 갖고있는 객체를 참조(전달)하기도 한다. 
+FrontController
+ex)
+
+-Controller
+public void index(HttpServletResp) {	<--------------------		
+	PrintWriter out = response.getWriter();	l
+	out.println("Welcome");			l
+						l
+}						l
+						l
+-Front Controller					l
+void service(HttpRequest request, Http... response){	l		// 같은 response객체를 받으면서 그걸이용해서 출력도 가능하다.	
+	method.invoke(response);					// 객체가 가지고있는 writer를 가지고 출력을 하게되면은 출력이라고하는 문서를 굳이 resolver로 반환하지않고 출력해볼수 있다.
+}								// 이렇게 출력되게되면 이제 출력될값이 출력버퍼에 들어가게되고 이것이 void를 반환 할지라도 Controller에 출력되는 값을 채웠기때문에 출력된다.
+
+
+이게바로 첫번째 방법이다.
+이렇게 과거에 서블릿이라고하는것을 사용했을때 처럼 내가 필요한것이있으면 Controller의 클래스의 매개변수로 에 Request 나 Response를 선언해주면된다.
+그럼 프론트 컨트롤러가 이걸 넘겨준다. 참조를가지고 입출력이가능하다. viewResolver없이 어떤 page를 준비하지않고 직접출력하려면 이렇게 해도된다.
+
+하지만 스프링은 더편한방법을 제공하고있다.
+서블릿객체를 얻어서 활용할수도있지만 문서가 필요없고 Hello Index를 출력해보고싶으면
+
+public void index(HttpServletResp){					//반환형을 String으로 바꾸고
+	return "Hello Index";					//출력하고 싶은 문자열을 반환하면된다.
+}
+
+이렇게하면 문제가 반환하는것들을 view라고 생각하고 view와 관련된Resolver에서 이이름에 관련된 페이지를 찾든 Tiles정보를 얻는 그렇게 될것이다.
+우리가 반환하는 문자열은  문자열자체가 사용자에게 가길원한다.라고하면 어노테이션을 써야한다.
+@ResponseBody : 리턴하는 녀석은 그자체가 Responsebody이다.  viewResolver를 사용하지말고 이자체를 사용자에게 보내라 이런 말이다.
+
+ex)
+@ResponseBody
+public String index() {
+	return "Hello Index";
+}
+	
+
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
