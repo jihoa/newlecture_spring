@@ -1700,4 +1700,64 @@ Header	= 요청 헤더로 전달되는 문자열
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+Spring MVC (스프링 웹 MVC) 강의 35 - QueryString 입력 #1
+
+쿼리스트링을 통해서 전달되는 값을 spring mvc는 어떻게 받을수있는지 알아보겠다.
+
+request "/list?p=1" 이런값이 쿼리스트링을통해서 온다. 
+쿼리스트링을 전달하는 이유?
+/list 는 GET 요청이고 추가로 ?를 쓰고 달라고하는것은 기본적으로 옵션으로해서 달라는것이다. 현재목록을 주세요 1페이지만 주세요
+그걸가지고 페이지 목록을 줘야한다.
+
+request "/list?p=1"  이런요청이오면  Controller에서 받을수있어야한다.
+FrontController 가 Controller를 호출하면서  Controoler의 매개변수라던지 반환값을 체크한다.
+
+@RequestMapping("index")
+public void index(HttpServletReque.. request) {		request가 필요해서 매개변수를 선언하면 FrontController가 실행되면서 FrontController가 가지고있으면 제공해준다.
+	String p = request.getParameter("p");		// 넘겨받은 Request를 통해서 값을 넘겨받을수있다. 이렇게하면 예전방법 이랑똑같다. 좋다고 보기도어렵다. 
+}
+
+필요한도구가있으면 매개변수로 선언해도되고 없으면 안써도된다. 자유도가 높다! 스프링 MVC가 가지고있는 FrontController 덕분에
+
+컨트롤러는 좀더앞서서 더 많은 기능을 제공한다.
+
+void service(HttpRequest request, Http... response){	
+	String p = request.getParameter("p");			// 2. 얘가 값을 꺼내서
+	method.invoke(p);					// 3. FrontController에서 Controller로 값을 전달한다.
+}			
+
+
+@RequestMapping("index")
+public void index(String p) {					// 1. 이렇게 매개변수로 등록만해도
+
+}
+
+실제로 실습을 해보도록 해보자.
+
+-NoticeController.java
+
+@RequestMapping("list")
+public String list(HttpServletRequest request) throws ClassNotFoundException, SQLException {		//ServletRequest도구를 이용하는 방법을 먼저알아보자.
+	String p = request.getParameter("p");							// p를 선언하고 getparameter로 읽는다.
+	System.out.println(p);
+	
+	List<Notice> list=noticeService.getList(1, "TITLE", "");
+	return "notice.list";
+}
+	
+http://localhost:8080/customer/notice/list?p=1 을 url로 들어갔더니
+1이 제대로 전달되었다.
+
+이번에는 String list(String p) p라는 변수를 선언만 해보자
+
+@RequestMapping("list")
+public String list(String p) throws ClassNotFoundException, SQLException {
+	//String p = request.getParameter("p");
+	System.out.println(p);
+	
+	//List<Notice> list=noticeService.getList(1, "TITLE", "");
+	return "notice.list";
+}
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
