@@ -1761,3 +1761,44 @@ public String list(String p) throws ClassNotFoundException, SQLException {
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+Spring MVC (스프링 웹 MVC) 강의 36 - QueryString 입력 #2 : 변수명 별칭과 기본 값처리
+
+입력받을떄 변수명을 다른걸로 받을수 없을까? 값이 전달되지않았을경우에 값을 미리 정해놓을수 없을까?
+void service(HttpRequest request, Http... response){	
+	String p = request.getParameter("p");			
+	method.invoke(p);					
+}			
+
+
+@RequestMapping("index")
+public void index(String p) {					
+
+}
+
+이렇게 p를 등록해놓으면 같은이름으로 들어오면 p라는 변수에 담아준다. p가아닌 다른변수를 사용하고 싶은 경우가 있다.
+
+@RequestMapping("index")
+public void index(@RequestParam("p") String page) {		// RequestParam이라고해서 request할때 가져올수있는 이름(p)을 지정할수있다 가져와서 page에 저장할것이다.
+					
+}
+
+-NoticeController.java 
+
+@RequestMapping("list")
+public String list(@RequestParam("p") String page) throws ClassNotFoundException, SQLException {
+	System.out.println("page:"+page);
+}		
+
+http://localhost:8080/customer/notice/list?p=2 의 url을 넣었을때 console창에 page:2라고 뜨는것을 확인했다 하지만 쿼리스트링을 안붙이면 에러가뜬다. 당연한것이다.
+기본값을 설정해주면된다.
+
+@RequestMapping("list")
+public String list(@RequestParam(name="p",defaultValue="1") String page) throws ClassNotFoundException, SQLException {
+	System.out.println("page:"+page);
+}		
+
+name="p" 원래 name은 생략되어있던것이다.
+defaultValue="1" 기본값을 1로 설정한다고 선언
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
