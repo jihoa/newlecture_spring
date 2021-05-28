@@ -1802,3 +1802,36 @@ defaultValue="1" 기본값을 1로 설정한다고 선언
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+Spring MVC (스프링 웹 MVC) 강의 37 - @RequestParam Optional 속성
+
+구글에다가 @RequestParam Spring io 를 검색하면 스프링이 제공하는 문서를 볼수있다.
+https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/bind/annotation/RequestParam.html
+
+지난시간에 name 과 defaultValue를 사용해보았다.
+
+@RequestMapping("list")
+public String list(@RequestParam(name="p") String page) throws ClassNotFoundException, SQLException {
+	System.out.println("page:"+page);
+}	
+
+이상태에서 parameter를 주지않는다면 에러가 나게된다 왜냐하면 default값을 주지않았기때문이다.
+
+@RequestMapping("list")
+public String list(@RequestParam(name="p",required=false ) Integer page) throws ClassNotFoundException, SQLException {
+	System.out.println("page:"+page);
+}	
+required=false값을 주게되면 어떻게 될까?
+오류가 나는데 전달해야하는값이 전달되지않았다면 null값이 없는데 Null값이 Int에 들어갈수없으므로 에러가난다.
+Integer로 바꾸면 문제없이 동작한다.
+
+그렇다면 required=true로 바꾸면 에러가 발생한다. p가전달되지않았다고 에러가 난다. 
+이것은 필수값을 뜻한다.
+
+required나 defaultValue 둘중에 하나를 사용한다.
+
+또하나의 속성은 Value이다. name이라는 속성을 대신할수도있고, 별칭으로 사용할수도있다. 
+하지만 value와 name을 둘다 사용하면 안된다.
+
+그렇다면 별칭을 왜만들었을까? 뉴렉선생님도 잘모르신다고한다. 
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
