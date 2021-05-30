@@ -1835,3 +1835,47 @@ required나 defaultValue 둘중에 하나를 사용한다.
 그렇다면 별칭을 왜만들었을까? 뉴렉선생님도 잘모르신다고한다. 
 
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Spring MVC (스프링 웹 MVC) 강의 38 - POST 입력을 위한 Admin 컨트롤러 추가하기
+
+POST입력을 알아보기위해서 POST입력을 위한 컨트롤러와 view페이지를 준비할것이다.
+
+같은 이름의 noticeController가 두개여서 ioc객체에서 같은 이름의 컨트롤러가 두개여서 에러가 발생한다. 그래서 어떻게 다른이름으로 저장하냐면
+@Controller("adminNoticeController")
+이렇게 이름을 주면된다.
+
+package com.newlecture.web.controller.admin.board;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+@Controller("adminNoticeController")			// 이걸사용하면 이렇게 바뀜<bean name="adminNoticeController" class="com.newlecture.web.controller.admin.board.NoticeController"/>
+@RequestMapping("/admin/board/notice")
+public class NoticeController {			//<bean name="noticeController" class="com.newlecture.web.controller.admin.board.NoticeController"/>
+
+	@RequestMapping("list")
+	public String list() {
+		return "";
+	}
+	
+	@RequestMapping("reg")
+	@ResponseBody
+	public String reg() {
+		return "reg";
+	}
+	
+	@RequestMapping("edit")
+	public String edit() {
+		return "";
+	}
+	
+	@RequestMapping("del")
+	public String del() {
+		return "";
+	}
+	
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
